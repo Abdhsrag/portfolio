@@ -84,7 +84,7 @@ function TorusRing() {
 
 export default function Background3D() {
   return (
-    <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
+    <div className="fixed inset-0 w-full h-full -z-10">
       <Canvas
         camera={{
           position: [0, 0, 10],
@@ -98,10 +98,8 @@ export default function Background3D() {
           powerPreference: "high-performance",
         }}
       >
-        {/* Solid black background */}
         <color attach="background" args={["#000000"]} />
 
-        {/* BRIGHT lighting */}
         <ambientLight intensity={0.8} />
         <directionalLight position={[5, 5, 5]} intensity={2} color="#ffffff" />
         <pointLight position={[10, 10, 10]} intensity={3} color="#00ffff" />
@@ -109,31 +107,26 @@ export default function Background3D() {
         <pointLight position={[0, 0, 10]} intensity={2} color="#ffffff" />
 
         <Suspense fallback={null}>
-          {/* Background stars - FIXED SETTINGS */}
           <Stars
-            radius={120}        // Increased radius
-            depth={80}          // Increased depth
-            count={7000}        // More stars
-            factor={6}          // Bigger stars
-            saturation={1}      // Changed from 0 - adds color
-            fade={true}         // Keep fade
-            speed={1.5}         // Faster movement
+            radius={120}
+            depth={80}
+            count={7000}
+            factor={6}
+            saturation={1}
+            fade={true}
+            speed={1.5}
           />
 
-          {/* Main glowing sphere */}
           <GlowingSphere />
 
-          {/* Floating orbs */}
           <FloatingOrb position={[-4, 1, -3]} color="#00ffff" size={0.8} />
           <FloatingOrb position={[4, -1, -4]} color="#ff00ff" size={1} />
           <FloatingOrb position={[0, 3, -6]} color="#ffff00" size={0.6} />
 
-          {/* Rotating ring */}
           <TorusRing />
         </Suspense>
       </Canvas>
 
-      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/30 to-black pointer-events-none" />
     </div>
   );
