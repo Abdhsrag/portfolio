@@ -6,7 +6,7 @@ import * as THREE from "three";
 
 export function Dragon3D({ mousePosition, ...props }) {
   const group = useRef();
-  const { scene, animations } = useGLTF("/models/dragon.glb");
+  const { scene, animations } = useGLTF("https://financial-orange-crocodile.myfilebase.com/ipfs/Qmf3s8VkdQ9kpfGjbFHkEBaZopdArig6p2iwjn1k6gYcgy");
   const { actions } = useAnimations(animations, group);
   
   // Load both sets of textures
@@ -100,7 +100,7 @@ export function Dragon3D({ mousePosition, ...props }) {
 }
 
 // Register the extension with useGLTF's loader
-useGLTF.preload("/models/dragon.glb", (loader) => {
+useGLTF.preload("https://financial-orange-crocodile.myfilebase.com/ipfs/Qmf3s8VkdQ9kpfGjbFHkEBaZopdArig6p2iwjn1k6gYcgy", (loader) => {
   loader.register((parser) => {
     // Import the extension class
     const { GLTFMaterialsPbrSpecularGlossinessExtension } = 
