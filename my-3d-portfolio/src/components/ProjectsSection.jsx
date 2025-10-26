@@ -5,7 +5,6 @@ import AnimatedGrid from "./magicui/animated-grid";
 import { useMemo } from "react";
 
 export default function ProjectsSection() {
-  // Memoize projects array to prevent re-creation
   const projects = useMemo(() => [
     {
       title: "CRUD Store Manager",

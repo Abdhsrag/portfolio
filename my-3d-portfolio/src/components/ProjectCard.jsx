@@ -8,12 +8,10 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
   const [imageError, setImageError] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  // Detect touch device once
   useEffect(() => {
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
   }, []);
 
-  // Memoize handlers
   const handleTap = useCallback(() => {
     if (isTouchDevice) {
       setIsHovered(prev => !prev);
@@ -54,18 +52,19 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
       {/* Card Content */}
       <div className="relative glass-card h-full flex flex-col backdrop-blur-xl rounded-2xl border-2 border-transparent group-hover:border-cyan-400/30 transition-all overflow-hidden">
         
-        {/* Image Preview - Expands on Hover/Tap */}
+        {/* Image Preview - FIXED HEIGHT ISSUE */}
         <AnimatePresence>
           {isHovered && (
             <motion.div 
-              className="relative w-full h-48 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden"
+              className="relative w-full overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 192, opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ minHeight: 192 }} // ADDED: Ensures minimum height during animation
             >
               {image && !imageError ? (
-                <>
+                <div className="relative w-full h-48"> {/* FIXED: Wrapper with fixed height */}
                   <Image 
                     src={image} 
                     alt={title}
@@ -75,34 +74,33 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
                     onError={() => setImageError(true)}
                     quality={75}
                     loading="lazy"
+                    priority={false}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                </>
+                </div>
               ) : (
-                <>
-                  <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
-                    <motion.div
-                      className="absolute inset-0 opacity-20"
-                      animate={{
-                        backgroundPosition: ["0% 0%", "100% 100%"],
-                      }}
-                      transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
-                      style={{
-                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)",
-                        backgroundSize: "20px 20px",
-                      }}
-                    />
-                    <i className={`${icon} text-6xl text-white/30 relative z-10`} />
-                  </div>
+                <div className={`w-full h-48 bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
+                  <motion.div
+                    className="absolute inset-0 opacity-20"
+                    animate={{
+                      backgroundPosition: ["0% 0%", "100% 100%"],
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+                    style={{
+                      backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)",
+                      backgroundSize: "20px 20px",
+                    }}
+                  />
+                  <i className={`${icon} text-6xl text-white/30 relative z-10`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                </>
+                </div>
               )}
 
               {isTouchDevice && (
                 <motion.div 
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full p-2"
+                  className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full p-2 z-10"
                 >
                   <i className="fas fa-times text-white text-sm" />
                 </motion.div>
