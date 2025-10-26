@@ -9,7 +9,6 @@
 
   html {
     @apply scroll-smooth;
-    /* Optimize font rendering */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -20,24 +19,21 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     position: relative;
     min-height: 100vh;
-    /* GPU acceleration for smoother animations */
     transform: translateZ(0);
     backface-visibility: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold;
-    /* Prevent layout shift */
     font-display: swap;
   }
   
-  /* Optimize images */
   img {
     content-visibility: auto;
   }
 }
 
-/* Scrollbar - Optimized */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -56,22 +52,30 @@
   color: white;
 }
 
-/* Text Gradient - Optimized */
+/* Text Gradient - FIXED FOR MOBILE */
 .text-gradient {
   background: linear-gradient(90deg, #00d9ff, #a855f7, #ec4899);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-x 3s ease infinite;
-  /* GPU acceleration */
+  animation: gradient-x 8s ease infinite; /* SLOWER: 3s -> 8s */
   will-change: background-position;
 }
 
-/* Glass Card - Optimized */
+/* Mobile: Even slower, or disable animation completely */
+@media (max-width: 768px) {
+  .text-gradient {
+    animation: gradient-x 15s ease infinite; /* MUCH SLOWER on mobile */
+    /* OR completely disable animation on mobile: */
+    /* animation: none; */
+    /* background-position: 0% 50%; */
+  }
+}
+
+/* Glass Card */
 .glass-card {
   @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl transition-all duration-300;
-  /* GPU acceleration */
   transform: translateZ(0);
   will-change: transform, box-shadow;
 }
@@ -104,7 +108,7 @@
   overflow: hidden;
 }
 
-/* Animations - Optimized with will-change */
+/* Animations */
 @keyframes gradient-x {
   0%, 100% {
     background-position: 0% 50%;
@@ -123,7 +127,7 @@
   }
 }
 
-/* Reduce motion for accessibility */
+/* Reduce motion for accessibility & performance */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -135,18 +139,32 @@
   }
   
   .text-gradient {
-    animation: none;
+    animation: none !important;
+    background-position: 0% 50%;
   }
 }
 
 /* Performance optimizations for mobile */
 @media (max-width: 768px) {
   * {
-    /* Reduce motion on mobile for better performance */
-    animation-duration: 0.3s !important;
+    /* Slower, smoother animations on mobile */
+    animation-duration: 1s !important;
   }
   
   .glass-card {
-    backdrop-filter: blur(8px); /* Reduce blur on mobile */
+    backdrop-filter: blur(8px); /* Less blur on mobile */
+  }
+  
+  /* Disable hover effects on mobile that might cause flicker */
+  .glass-card:hover {
+    @apply bg-white/5; /* Less intense hover on mobile */
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
+  }
+}
+
+/* High refresh rate displays - smoother animations */
+@media (min-width: 769px) and (min-resolution: 120dpi) {
+  .text-gradient {
+    animation: gradient-x 10s ease infinite;
   }
 }
