@@ -1,32 +1,17 @@
 "use client";
-import { useEffect, useState, lazy, Suspense } from "react";
+import { useEffect, useState } from "react";
 import FloatingNav from "../components/FloatingNav";
 import HeroSection from "../components/HeroSection";
-
-// Lazy load heavy components
-const AboutSection = lazy(() => import("../components/AboutSection"));
-const ProjectsSection = lazy(() => import("../components/ProjectsSection"));
-const ContactSection = lazy(() => import("../components/ContactSection"));
-
-// Loading fallback
-function SectionLoader() {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
+import AboutSection from "../components/AboutSection";
+import ProjectsSection from "../components/ProjectsSection";
+import ContactSection from "../components/ContactSection";
 
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    
     let rafId;
     const handleMouseMove = (e) => {
-      // Use RAF to throttle mouse updates
       if (rafId) return;
       rafId = requestAnimationFrame(() => {
         setMousePosition({
@@ -44,26 +29,17 @@ export default function Home() {
     };
   }, []);
 
-  if (!isMounted) return null;
-
   return (
     <main className="relative min-h-screen text-white bg-black">
+      {/* Nav will portal to body, so position doesn't matter */}
       <FloatingNav />
+      
       <HeroSection mousePosition={mousePosition} />
-      
-      <Suspense fallback={<SectionLoader />}>
-        <AboutSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionLoader />}>
-        <ProjectsSection />
-      </Suspense>
-      
-      <Suspense fallback={<SectionLoader />}>
-        <ContactSection />
-      </Suspense>
+      <AboutSection />
+      <ProjectsSection />
+      <ContactSection />
 
-      <footer className="relative py-12 px-6 border-t border-white/5 z-10 bg-black/80 backdrop-blur-sm mb-24">
+      <footer className="relative py-12 px-6 border-t border-white/5 bg-black/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-center md:text-left">

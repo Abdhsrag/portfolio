@@ -12,6 +12,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    scroll-padding-top: 2rem;
+    scroll-padding-bottom: 6rem;
   }
 
   body {
@@ -19,7 +21,7 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     position: relative;
     min-height: 100vh;
-    transform: translateZ(0);
+    transform: none !important; /* IMPORTANT: Prevents breaking fixed positioning */
     backface-visibility: hidden;
   }
 
@@ -33,7 +35,17 @@
   }
 }
 
-/* Scrollbar */
+/* Main content padding for dock */
+main {
+  padding-bottom: 6rem;
+}
+
+/* Footer spacing for dock */
+footer {
+  margin-bottom: 5rem !important;
+}
+
+/* Scrollbar Styles */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -47,33 +59,47 @@
   border-radius: 10px;
 }
 
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #00e5ff, #b366ff);
+}
+
+/* Selection */
 ::selection {
   background: rgba(0, 217, 255, 0.3);
   color: white;
 }
 
-/* Text Gradient - FIXED FOR MOBILE */
+::-moz-selection {
+  background: rgba(0, 217, 255, 0.3);
+  color: white;
+}
+
+/* Text Gradient - Optimized for mobile */
 .text-gradient {
   background: linear-gradient(90deg, #00d9ff, #a855f7, #ec4899);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-x 8s ease infinite; /* SLOWER: 3s -> 8s */
+  animation: gradient-x 8s ease infinite;
   will-change: background-position;
 }
 
-/* Mobile: Even slower, or disable animation completely */
+/* Slower gradient animation on mobile */
 @media (max-width: 768px) {
   .text-gradient {
-    animation: gradient-x 15s ease infinite; /* MUCH SLOWER on mobile */
-    /* OR completely disable animation on mobile: */
-    /* animation: none; */
-    /* background-position: 0% 50%; */
+    animation: gradient-x 15s ease infinite;
   }
 }
 
-/* Glass Card */
+/* High refresh rate displays - smoother animations */
+@media (min-width: 769px) and (min-resolution: 120dpi) {
+  .text-gradient {
+    animation: gradient-x 10s ease infinite;
+  }
+}
+
+/* Glass Card Effect */
 .glass-card {
   @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl transition-all duration-300;
   transform: translateZ(0);
@@ -85,7 +111,7 @@
   box-shadow: 0 0 30px rgba(0, 217, 255, 0.2);
 }
 
-/* Grid Pattern */
+/* Grid Pattern Background */
 .grid-pattern {
   background-image: 
     linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
@@ -93,12 +119,12 @@
   background-size: 50px 50px;
 }
 
-/* Perspective */
+/* 3D Perspective */
 .perspective-1000 {
   perspective: 1000px;
 }
 
-/* Parallax container */
+/* Parallax Container */
 .parallax-container {
   position: fixed;
   inset: 0;
@@ -127,7 +153,47 @@
   }
 }
 
-/* Reduce motion for accessibility & performance */
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 217, 255, 0.6);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -142,29 +208,249 @@
     animation: none !important;
     background-position: 0% 50%;
   }
+  
+  html {
+    scroll-behavior: auto !important;
+  }
 }
 
-/* Performance optimizations for mobile */
+/* Mobile Optimizations */
 @media (max-width: 768px) {
   * {
-    /* Slower, smoother animations on mobile */
     animation-duration: 1s !important;
   }
   
   .glass-card {
-    backdrop-filter: blur(8px); /* Less blur on mobile */
+    backdrop-filter: blur(8px);
   }
   
-  /* Disable hover effects on mobile that might cause flicker */
   .glass-card:hover {
-    @apply bg-white/5; /* Less intense hover on mobile */
+    @apply bg-white/5;
     box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
+  }
+  
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
-/* High refresh rate displays - smoother animations */
-@media (min-width: 769px) and (min-resolution: 120dpi) {
-  .text-gradient {
-    animation: gradient-x 10s ease infinite;
+/* Tablet Optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  main {
+    padding-bottom: 5rem;
+  }
+  
+  footer {
+    margin-bottom: 4rem !important;
   }
 }
+
+/* Large Desktop Optimizations */
+@media (min-width: 1920px) {
+  .max-w-7xl {
+    max-width: 1600px;
+  }
+}
+
+/* Loading States */
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+/* Focus States for Accessibility */
+*:focus-visible {
+  outline: 2px solid #00d9ff;
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #00d9ff;
+  outline-offset: 4px;
+}
+
+/* Print Styles */
+@media print {
+  .fixed,
+  nav,
+  footer,
+  #floating-dock-container {
+    display: none !important;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .text-gradient {
+    -webkit-text-fill-color: initial;
+    color: black;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .glass-card {
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  
+  .text-gradient {
+    -webkit-text-fill-color: #00d9ff;
+    color: #00d9ff;
+  }
+}
+
+/* Smooth scrolling offset for anchor links */
+[id] {
+  scroll-margin-top: 2rem;
+  scroll-margin-bottom: 6rem;
+}
+
+/* Custom Utility Classes */
+.backdrop-blur-heavy {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.backdrop-blur-light {
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+/* Gradient Text Variations */
+.text-gradient-blue {
+  background: linear-gradient(90deg, #00d9ff, #0099ff);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(90deg, #a855f7, #ec4899);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow Effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+}
+
+/* Hover Glow */
+.hover-glow-cyan:hover {
+  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Safari-specific fixes */
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .glass-card {
+    -webkit-backdrop-filter: blur(16px);
+  }
+}
+
+/* Firefox-specific optimizations */
+@-moz-document url-prefix() {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ============================================
+   FLOATING DOCK - FORCED FIXED POSITIONING
+   ============================================ */
+
+/* CRITICAL: Force dock to stay fixed and centered */
+#floating-dock-container {
+  position: fixed !important;
+  bottom: 24px !important;
+  left: 0 !important;
+  right: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+  will-change: transform;
+  isolation: isolate;
+}
+
+/* Allow clicks on dock items */
+#floating-dock-container > * {
+  pointer-events: auto !important;
+}
+
+/* Mobile: Smaller spacing */
+@media (max-width: 768px) {
+  #floating-dock-container {
+    bottom: 12px !important;
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  #floating-dock-container {
+    bottom: 18px !important;
+  }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  #floating-dock-container {
+    bottom: 8px !important;
+  }
+}
+
+/* Prevent any parent transforms from breaking fixed positioning */
+body,
+body > *,
+#__next,
+main {
+  transform: none !important;
+}
+
+/* Ensure nothing covers the dock */
+body > * {
+  position: relative;
+  z-index: auto;
+}
+
+/* Make sure fixed elements actually stay fixed */
+.fixed,
+[style*="position: fixed"],
+[style*="position:fixed"] {
+  position: fixed !important;
+}
+
+/* Force dock above everything */
+nav,
+[role="navigation"] {
+  isolation: isolate;
+  z-index: 999999 !important;
+}
+
+/* ============================================
+   END FLOATING DOCK FIXES
+   ============================================ */

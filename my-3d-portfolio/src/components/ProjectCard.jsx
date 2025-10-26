@@ -1,47 +1,32 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, memo, useEffect, useCallback } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
-const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradient, icon = "fas fa-rocket", image, index = 0 }) {
+export default function ProjectCard({ title, desc, link, tech, gradient, icon = "fas fa-rocket", image, index = 0 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
-  }, []);
+  const handleTouchStart = () => {
+    setIsHovered(true);
+  };
 
-  const handleTap = useCallback(() => {
-    if (isTouchDevice) {
-      setIsHovered(prev => !prev);
-    }
-  }, [isTouchDevice]);
-
-  const handleHoverStart = useCallback(() => {
-    if (!isTouchDevice) setIsHovered(true);
-  }, [isTouchDevice]);
-
-  const handleHoverEnd = useCallback(() => {
-    if (!isTouchDevice) setIsHovered(false);
-  }, [isTouchDevice]);
-
-  const handleLinkClick = useCallback((e) => {
-    if (isTouchDevice && !isHovered) {
-      e.preventDefault();
-    }
-  }, [isTouchDevice, isHovered]);
+  const handleTouchEnd = () => {
+    // Delay the removal to allow user to see the effect
+    setTimeout(() => setIsHovered(false), 2000);
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
+      viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      onHoverStart={handleHoverStart}
-      onHoverEnd={handleHoverEnd}
-      onTap={handleTap}
-      className="group relative h-full cursor-pointer"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className="group relative h-full"
     >
       {/* Glow Effect */}
       <motion.div 
@@ -52,19 +37,19 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
       {/* Card Content */}
       <div className="relative glass-card h-full flex flex-col backdrop-blur-xl rounded-2xl border-2 border-transparent group-hover:border-cyan-400/30 transition-all overflow-hidden">
         
-        {/* Image Preview - FIXED HEIGHT ISSUE */}
+        {/* Image Preview - Expands on Hover */}
         <AnimatePresence>
           {isHovered && (
             <motion.div 
-              className="relative w-full overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800"
+              className="relative w-full h-48 bg-gradient-to-br from-gray-900 to-gray-800 overflow-hidden"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 192, opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.4, ease: "easeInOut" }}
-              style={{ minHeight: 192 }} // ADDED: Ensures minimum height during animation
             >
               {image && !imageError ? (
-                <div className="relative w-full h-48"> {/* FIXED: Wrapper with fixed height */}
+                // Show actual image if available
+                <>
                   <Image 
                     src={image} 
                     alt={title}
@@ -72,54 +57,38 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover"
                     onError={() => setImageError(true)}
-                    quality={75}
-                    loading="lazy"
-                    priority={false}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                </div>
+                </>
               ) : (
-                <div className={`w-full h-48 bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
-                  <motion.div
-                    className="absolute inset-0 opacity-20"
-                    animate={{
-                      backgroundPosition: ["0% 0%", "100% 100%"],
-                    }}
-                    transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
-                    style={{
-                      backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)",
-                      backgroundSize: "20px 20px",
-                    }}
-                  />
-                  <i className={`${icon} text-6xl text-white/30 relative z-10`} />
+                // Show gradient placeholder if no image or image error
+                <>
+                  <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
+                    {/* Animated background pattern */}
+                    <motion.div
+                      className="absolute inset-0 opacity-20"
+                      animate={{
+                        backgroundPosition: ["0% 0%", "100% 100%"],
+                      }}
+                      transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+                      style={{
+                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.3) 1px, transparent 1px)",
+                        backgroundSize: "20px 20px",
+                      }}
+                    />
+                    
+                    {/* Large icon */}
+                    <i className={`${icon} text-6xl text-white/30 relative z-10`} />
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
-                </div>
-              )}
-
-              {isTouchDevice && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full p-2 z-10"
-                >
-                  <i className="fas fa-times text-white text-sm" />
-                </motion.div>
+                </>
               )}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {isTouchDevice && !isHovered && image && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute top-4 right-4 z-10 bg-cyan-400/20 backdrop-blur-sm rounded-full p-2 border border-cyan-400/30"
-          >
-            <i className="fas fa-image text-cyan-400 text-sm" />
-          </motion.div>
-        )}
-
         <div className="p-6 sm:p-8 flex flex-col flex-grow">
+          {/* Icon Badge */}
           <motion.div 
             className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 sm:mb-6 shadow-lg`}
             whileHover={{ rotate: 360, scale: 1.1 }}
@@ -128,14 +97,17 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
             <i className={`${icon} text-white text-xl sm:text-2xl`} />
           </motion.div>
 
+          {/* Title */}
           <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-white group-hover:text-gradient transition-all">
             {title}
           </h3>
 
+          {/* Description */}
           <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 flex-grow leading-relaxed line-clamp-3">
             {desc}
           </p>
 
+          {/* Tech Stack */}
           <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
             {tech.map((t, techIndex) => (
               <motion.span
@@ -152,13 +124,13 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
             ))}
           </div>
 
+          {/* CTA Link */}
           <motion.a
             href={link}
             target="_blank"
             rel="noreferrer"
             className="group/link inline-flex items-center gap-2 text-cyan-400 font-semibold mt-auto hover:gap-4 transition-all text-sm sm:text-base"
             whileHover={{ x: 5 }}
-            onClick={handleLinkClick}
           >
             <span>View Project</span>
             <motion.i 
@@ -171,6 +143,4 @@ const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradien
       </div>
     </motion.div>
   );
-});
-
-export default ProjectCard;
+}

@@ -1,12 +1,17 @@
 import "./globals.css";
-import Script from "next/script";
 
 export const metadata = {
   title: "Abdelrahman Mohamed | Fullstack Developer",
   description: "Portfolio of Abdelrahman Mohamed - Fullstack Developer specializing in React, Next.js, Django, and modern web technologies",
   keywords: "Fullstack Developer, React, Next.js, Django, Python, JavaScript, Portfolio",
   authors: [{ name: "Abdelrahman Mohamed" }],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5",
+};
+
+// Separate viewport export (Next.js 14+ requirement)
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
   themeColor: "#00d9ff",
 };
 

@@ -1,7 +1,15 @@
 "use client";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { FloatingDock } from "./ui/floating-dock";
 
 export default function FloatingNav() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const links = [
     {
       title: "Home",
@@ -19,11 +27,6 @@ export default function FloatingNav() {
       href: "#projects",
     },
     {
-      title: "Skills",
-      icon: <i className="fas fa-tools text-white text-xl" />,
-      href: "#about",
-    },
-    {
       title: "Contact",
       icon: <i className="fas fa-envelope text-white text-xl" />,
       href: "#contact",
@@ -38,16 +41,29 @@ export default function FloatingNav() {
       icon: <i className="fab fa-linkedin text-white text-xl" />,
       href: "https://www.linkedin.com/in/abdelrahmanmohamedosama",
     },
-    {
-      title: "WhatsApp",
-      icon: <i className="fab fa-whatsapp text-white text-xl" />,
-      href: "https://wa.me/201277116459",
-    },
   ];
 
-  return (
-    <div className="fixed bottom-6 sm:bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-      <FloatingDock items={links} />
-    </div>
+  if (!mounted) return null;
+
+  return createPortal(
+    <div
+      id="floating-dock-container"
+      style={{
+        position: "fixed",
+        bottom: "24px",
+        left: "0",
+        right: "0",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 999999,
+        pointerEvents: "none",
+      }}
+    >
+      <div style={{ pointerEvents: "auto" }}>
+        <FloatingDock items={links} />
+      </div>
+    </div>,
+    document.body
   );
 }
