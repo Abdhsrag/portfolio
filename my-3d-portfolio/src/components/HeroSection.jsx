@@ -1,15 +1,27 @@
 "use client";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useState, useEffect, useRef, useCallback } from "react";
-import { PerspectiveCamera, OrbitControls } from "@react-three/drei";
-import { Scene3D } from "./Scene3D";
+import { Suspense, useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { PerspectiveCamera } from "@react-three/drei";
+import dynamic from "next/dynamic";
 import * as THREE from "three";
+
+// Dynamically import Scene3D only when needed
+const Scene3D = dynamic(() => import("./Scene3D").then(mod => ({ default: mod.Scene3D })), {
+  ssr: false,
+  loading: () => null
+});
+
+// Simplified OrbitControls
+const OrbitControls = dynamic(() => import("@react-three/drei").then(mod => ({ default: mod.OrbitControls })), {
+  ssr: false
+});
 
 export default function HeroSection() {
   const [text, setText] = useState("");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
+  const [show3D, setShow3D] = useState(false);
   const fullText = "Fullstack Developer";
   const sectionRef = useRef(null);
 
@@ -20,6 +32,7 @@ export default function HeroSection() {
 
   const sceneOpacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 1, 0]);
 
+  // Typing effect
   useEffect(() => {
     let index = 0;
     const timer = setInterval(() => {
@@ -34,29 +47,53 @@ export default function HeroSection() {
     return () => clearInterval(timer);
   }, []);
 
-  // Detect mobile/tablet
+  // Detect mobile
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-
+    window.addEventListener("resize", checkMobile, { passive: true });
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Mouse movement tracking
+  // Delay 3D scene loading for better initial load
+  useEffect(() => {
+    const timer = setTimeout(() => setShow3D(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Optimized mouse tracking with throttling
   const handleMouseMove = useCallback((e) => {
+    if (isMobile) return;
     const x = (e.clientX / window.innerWidth) * 2 - 1;
     const y = -(e.clientY / window.innerHeight) * 2 + 1;
     setMousePosition({ x, y });
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    let rafId;
+    const throttledMove = (e) => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        handleMouseMove(e);
+        rafId = null;
+      });
+    };
+
+    window.addEventListener("mousemove", throttledMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", throttledMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [handleMouseMove]);
+
+  // Memoize camera settings
+  const cameraSettings = useMemo(() => ({
+    position: isMobile ? [0, 1, 8] : [0, 2, 5],
+    fov: isMobile ? 85 : 75,
+  }), [isMobile]);
 
   return (
     <section
@@ -64,81 +101,67 @@ export default function HeroSection() {
       id="home"
       className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 pt-20 pb-24"
     >
-      {/* 3D Scene Background - FULL SCREEN WITH MOVEMENT */}
-      <motion.div
-        className="absolute inset-0 z-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        style={{ opacity: sceneOpacity }}
-      >
-        <Canvas
-          camera={{
-            position: isMobile ? [0, 1, 8] : [0, 2, 5],
-            fov: isMobile ? 85 : 75,
-          }}
-          gl={{
-            alpha: true,
-            antialias: true,
-            toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.5,
-            outputColorSpace: THREE.SRGBColorSpace,
-          }}
-          dpr={[1, 2]}
+      {/* 3D Scene - Only load after delay */}
+      {show3D && (
+        <motion.div
+          className="absolute inset-0 z-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          style={{ opacity: sceneOpacity }}
         >
-          <PerspectiveCamera
-            makeDefault
-            position={isMobile ? [0, 1, 8] : [0, 2, 5]}
-            fov={isMobile ? 75 : 75}
-          />
-
-          {/* ENHANCED LIGHTING - MUCH BRIGHTER */}
-          <ambientLight intensity={1.5} />
-          <directionalLight position={[10, 10, 5]} intensity={2.5} castShadow />
-          <directionalLight position={[-10, 10, 5]} intensity={1.5} />
-          <directionalLight position={[0, 10, -5]} intensity={1.2} />
-          <pointLight position={[0, 5, 0]} intensity={2} color="#ffffff" />
-          <spotLight
-            position={[0, 15, 10]}
-            angle={0.5}
-            penumbra={1}
-            intensity={2}
-            castShadow
-          />
-          <hemisphereLight
-            skyColor="#ffffff"
-            groundColor="#444444"
-            intensity={1}
-          />
-
-          <Suspense fallback={null}>
-            <Scene3D
-              mousePosition={mousePosition}
-              isMobile={isMobile}
-              position={[0, 0, 0]}
-              scale={isMobile ? 0.4 : 0.4}
+          <Canvas
+            camera={cameraSettings}
+            gl={{
+              alpha: true,
+              antialias: false, // Disable for better performance
+              powerPreference: "high-performance",
+              toneMapping: THREE.ACESFilmicToneMapping,
+              toneMappingExposure: 1.5,
+              outputColorSpace: THREE.SRGBColorSpace,
+            }}
+            dpr={[1, 1.5]} // Limit DPR for performance
+            frameloop="demand" // Only render when needed
+            performance={{ min: 0.5 }} // Lower quality on slow devices
+          >
+            <PerspectiveCamera
+              makeDefault
+              position={cameraSettings.position}
+              fov={cameraSettings.fov}
             />
-          </Suspense>
 
-          {/* OrbitControls - Disabled on mobile for better performance */}
-          {!isMobile && (
-            <OrbitControls
-              enableZoom={false}
-              enablePan={false}
-              enableRotate={!isMobile}
-              autoRotate={true}
-              autoRotateSpeed={isMobile ? 1.0 : 0.5} // Faster on mobile
-              maxPolarAngle={Math.PI / 2}
-              minPolarAngle={Math.PI / 3}
-            />
-          )}
-        </Canvas>
-      </motion.div>
+            {/* Optimized lighting */}
+            <ambientLight intensity={1.5} />
+            <directionalLight position={[10, 10, 5]} intensity={2.5} />
+            <pointLight position={[0, 5, 0]} intensity={2} color="#ffffff" />
 
-      {/* Lighter overlay for better text readability */}
+            <Suspense fallback={null}>
+              <Scene3D
+                mousePosition={mousePosition}
+                isMobile={isMobile}
+                position={[0, 0, 0]}
+                scale={isMobile ? 0.4 : 0.4}
+              />
+            </Suspense>
+
+            {!isMobile && (
+              <OrbitControls
+                enableZoom={false}
+                enablePan={false}
+                enableRotate={true}
+                autoRotate={true}
+                autoRotateSpeed={0.5}
+                maxPolarAngle={Math.PI / 2}
+                minPolarAngle={Math.PI / 3}
+              />
+            )}
+          </Canvas>
+        </motion.div>
+      )}
+
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40 z-[5]" />
 
-      {/* CONTENT */}
+      {/* Content - Same as before */}
       <div className="relative z-10 max-w-7xl mx-auto w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

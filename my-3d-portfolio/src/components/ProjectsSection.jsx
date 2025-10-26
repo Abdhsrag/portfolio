@@ -2,9 +2,11 @@
 import { motion } from "framer-motion";
 import ProjectCard from "./ProjectCard";
 import AnimatedGrid from "./magicui/animated-grid";
+import { useMemo } from "react";
 
 export default function ProjectsSection() {
-  const projects = [
+  // Memoize projects array to prevent re-creation
+  const projects = useMemo(() => [
     {
       title: "CRUD Store Manager",
       desc: "A comprehensive CRUD system mimicking store operations with full product management capabilities",
@@ -12,7 +14,7 @@ export default function ProjectsSection() {
       tech: ["JavaScript", "LocalStorage", "CSS3"],
       gradient: "from-cyan-400 to-blue-500",
       icon: "fas fa-shopping-cart",
-      image: "/assets/1.png", // Add your image path
+      image: "/assets/1.png",
     },
     {
       title: "Restaurant Dark Mode",
@@ -102,7 +104,6 @@ export default function ProjectsSection() {
       tech: ["Django", "DjangoFastApi", "Python"],
       gradient: "from-orange-400 to-pink-500",
       icon: "fas fa-hand-holding-heart",
-      // No image - backend project
     },
     {
       title: "Charity Frontend",
@@ -121,7 +122,6 @@ export default function ProjectsSection() {
       gradient: "from-purple-400 to-indigo-500",
       icon: "fas fa-hospital",
       image: "/assets/12.png",
-      // No image - backend project
     },
     {
       title: "Bash Database System",
@@ -130,7 +130,6 @@ export default function ProjectsSection() {
       tech: ["Bash"],
       gradient: "from-gray-400 to-gray-600",
       icon: "fas fa-terminal",
-      // No image - CLI project
     },
     {
       title: "Blood Donation System",
@@ -141,21 +140,19 @@ export default function ProjectsSection() {
       icon: "fas fa-droplet",
       image: "/assets/13.png",
     },
-  ];
+  ], []);
 
   return (
     <section id="projects" className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden">
-      {/* Background Effects */}
       <AnimatedGrid />
       <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/5 to-black" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           className="text-center mb-12 sm:mb-20"
         >
           <motion.h2 
@@ -178,14 +175,12 @@ export default function ProjectsSection() {
           </p>
         </motion.div>
 
-        {/* Projects Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {projects.map((project, index) => (
-            <ProjectCard key={index} index={index} {...project} />
+            <ProjectCard key={project.title} index={index} {...project} />
           ))}
         </div>
 
-        {/* View More Section */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

@@ -1,33 +1,47 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, memo, useEffect, useCallback } from "react";
 import Image from "next/image";
 
-export default function ProjectCard({ title, desc, link, tech, gradient, icon = "fas fa-rocket", image, index = 0 }) {
+const ProjectCard = memo(function ProjectCard({ title, desc, link, tech, gradient, icon = "fas fa-rocket", image, index = 0 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
-  // Detect if device is touch-enabled
+  // Detect touch device once
   useEffect(() => {
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
   }, []);
 
-  // Handle tap/click for mobile
-  const handleTap = () => {
+  // Memoize handlers
+  const handleTap = useCallback(() => {
     if (isTouchDevice) {
-      setIsHovered(!isHovered);
+      setIsHovered(prev => !prev);
     }
-  };
+  }, [isTouchDevice]);
+
+  const handleHoverStart = useCallback(() => {
+    if (!isTouchDevice) setIsHovered(true);
+  }, [isTouchDevice]);
+
+  const handleHoverEnd = useCallback(() => {
+    if (!isTouchDevice) setIsHovered(false);
+  }, [isTouchDevice]);
+
+  const handleLinkClick = useCallback((e) => {
+    if (isTouchDevice && !isHovered) {
+      e.preventDefault();
+    }
+  }, [isTouchDevice, isHovered]);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      onHoverStart={() => !isTouchDevice && setIsHovered(true)}
-      onHoverEnd={() => !isTouchDevice && setIsHovered(false)}
+      onHoverStart={handleHoverStart}
+      onHoverEnd={handleHoverEnd}
       onTap={handleTap}
       className="group relative h-full cursor-pointer"
     >
@@ -51,7 +65,6 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
               transition={{ duration: 0.4, ease: "easeInOut" }}
             >
               {image && !imageError ? (
-                // Show actual image if available
                 <>
                   <Image 
                     src={image} 
@@ -60,14 +73,14 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover"
                     onError={() => setImageError(true)}
+                    quality={75}
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 </>
               ) : (
-                // Show gradient placeholder if no image or image error
                 <>
                   <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
-                    {/* Animated background pattern */}
                     <motion.div
                       className="absolute inset-0 opacity-20"
                       animate={{
@@ -79,15 +92,12 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
                         backgroundSize: "20px 20px",
                       }}
                     />
-                    
-                    {/* Large icon */}
                     <i className={`${icon} text-6xl text-white/30 relative z-10`} />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 </>
               )}
 
-              {/* Tap indicator for mobile - only show when image is visible */}
               {isTouchDevice && (
                 <motion.div 
                   initial={{ opacity: 0 }}
@@ -101,7 +111,6 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
           )}
         </AnimatePresence>
 
-        {/* Tap indicator - show when image is hidden on mobile */}
         {isTouchDevice && !isHovered && image && (
           <motion.div 
             initial={{ opacity: 0 }}
@@ -113,7 +122,6 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
         )}
 
         <div className="p-6 sm:p-8 flex flex-col flex-grow">
-          {/* Icon Badge */}
           <motion.div 
             className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 sm:mb-6 shadow-lg`}
             whileHover={{ rotate: 360, scale: 1.1 }}
@@ -122,17 +130,14 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
             <i className={`${icon} text-white text-xl sm:text-2xl`} />
           </motion.div>
 
-          {/* Title */}
           <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-white group-hover:text-gradient transition-all">
             {title}
           </h3>
 
-          {/* Description */}
           <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 flex-grow leading-relaxed line-clamp-3">
             {desc}
           </p>
 
-          {/* Tech Stack */}
           <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
             {tech.map((t, techIndex) => (
               <motion.span
@@ -149,19 +154,13 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
             ))}
           </div>
 
-          {/* CTA Link */}
           <motion.a
             href={link}
             target="_blank"
             rel="noreferrer"
             className="group/link inline-flex items-center gap-2 text-cyan-400 font-semibold mt-auto hover:gap-4 transition-all text-sm sm:text-base"
             whileHover={{ x: 5 }}
-            onClick={(e) => {
-              // Prevent link navigation when toggling image on mobile
-              if (isTouchDevice && !isHovered) {
-                e.preventDefault();
-              }
-            }}
+            onClick={handleLinkClick}
           >
             <span>View Project</span>
             <motion.i 
@@ -174,4 +173,6 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
       </div>
     </motion.div>
   );
-}
+});
+
+export default ProjectCard;

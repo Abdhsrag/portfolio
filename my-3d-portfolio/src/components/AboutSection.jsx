@@ -1,68 +1,47 @@
 "use client";
 import { motion } from "framer-motion";
 import FloatingParticles from "./magicui/floating-particles";
+import { useMemo } from "react";
 
 export default function AboutSection() {
-  const skills = [
+  const skills = useMemo(() => [
     { icon: "fab fa-html5", name: "HTML5", color: "#E34F26" },
     { icon: "fab fa-css3-alt", name: "CSS3", color: "#1572B6" },
     { icon: "fab fa-js", name: "JavaScript", color: "#F7DF1E" },
     { icon: "fab fa-react", name: "React", color: "#61DAFB" },
     { icon: "fab fa-angular", name: "Angular", color: "#DD0031" },
     { icon: "fab fa-node-js", name: "Node.js", color: "#339933" },
-    { 
-      icon: "fab fa-react", // Next.js uses React icon
-      name: "Next.js", 
-      color: "#FFFFFF",
-    },
-    { 
-      icon: "fab fa-js-square", // TypeScript - using JS icon as fallback
-      name: "TypeScript", 
-      color: "#3178C6",
-    },
+    { icon: "fab fa-react", name: "Next.js", color: "#FFFFFF" },
+    { icon: "fab fa-js-square", name: "TypeScript", color: "#3178C6" },
     { icon: "fab fa-bootstrap", name: "Bootstrap", color: "#7952B3" },
     { icon: "fas fa-database", name: "PostgreSQL", color: "#4169E1" },
     { icon: "fab fa-python", name: "Python", color: "#3776AB" },
-    { 
-      icon: "fab fa-python", // Django uses Python icon
-      name: "Django", 
-      color: "#092E20",
-    },
-    { 
-      icon: "fab fa-python", // Flask uses Python icon
-      name: "Flask", 
-      color: "#000000",
-    },
-    { 
-      icon: "fas fa-terminal", // Bash
-      name: "Bash", 
-      color: "#4EAA25",
-    },
+    { icon: "fab fa-python", name: "Django", color: "#092E20" },
+    { icon: "fab fa-python", name: "Flask", color: "#000000" },
+    { icon: "fas fa-terminal", name: "Bash", color: "#4EAA25" },
     { icon: "fab fa-git-alt", name: "Git", color: "#F05032" },
     { icon: "fab fa-github", name: "GitHub", color: "#181717" },
     { icon: "fab fa-linux", name: "Linux", color: "#FCC624" },
-  ];
+  ], []);
 
-  const stats = [
+  const stats = useMemo(() => [
     { label: "Projects", value: "20+" },
     { label: "Experience", value: "2Y+" },
-    { label: "Technologies", value: "17+" }, // Updated count
+    { label: "Technologies", value: "17+" },
     { label: "Coffee", value: "∞" },
-  ];
+  ], []);
 
   return (
     <section id="about" className="relative py-32 px-6 overflow-hidden">
-      {/* Background Effects */}
       <FloatingParticles count={15} />
       <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-950/5 to-black" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           className="text-center mb-20"
         >
           <motion.h2 
@@ -83,14 +62,12 @@ export default function AboutSection() {
           />
         </motion.div>
 
-        {/* Content Grid */}
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-          {/* Left: About Text */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             className="glass-card p-8 space-y-6"
           >
             <p className="text-lg leading-relaxed text-gray-300">
@@ -120,12 +97,11 @@ export default function AboutSection() {
             </motion.a>
           </motion.div>
 
-          {/* Right: Stats Grid */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-50px" }}
             className="grid grid-cols-2 gap-6"
           >
             {stats.map((stat, i) => (
@@ -147,12 +123,11 @@ export default function AboutSection() {
           </motion.div>
         </div>
 
-        {/* Skills Section */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           className="text-center"
         >
           <h3 className="text-4xl md:text-5xl font-black mb-12">
@@ -170,19 +145,16 @@ export default function AboutSection() {
                 whileHover={{ scale: 1.15, rotate: 5 }}
                 className="flex flex-col items-center gap-3 glass-card p-6 rounded-xl relative overflow-hidden group cursor-pointer"
               >
-                {/* Glow Effect */}
                 <div 
                   className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-xl"
                   style={{ background: skill.color }}
                 />
                 
-                {/* Icon */}
                 <i 
                   className={`${skill.icon} text-4xl md:text-5xl relative z-10 transition-all duration-300 group-hover:scale-110`}
                   style={{ color: skill.color }}
                 />
                 
-                {/* Name */}
                 <span className="text-xs text-gray-400 relative z-10 font-medium group-hover:text-white transition-colors text-center">
                   {skill.name}
                 </span>

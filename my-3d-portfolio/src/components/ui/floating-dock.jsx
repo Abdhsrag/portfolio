@@ -1,6 +1,6 @@
 "use client";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, memo, useCallback } from "react";
 
 export function FloatingDock({ items, desktopClassName, mobileClassName }) {
   return (
@@ -11,13 +11,21 @@ export function FloatingDock({ items, desktopClassName, mobileClassName }) {
   );
 }
 
-function FloatingDockDesktop({ items, className }) {
+const FloatingDockDesktop = memo(function FloatingDockDesktop({ items, className }) {
   const mouseX = useMotionValue(Infinity);
+
+  const handleMouseMove = useCallback((e) => {
+    mouseX.set(e.pageX);
+  }, [mouseX]);
+
+  const handleMouseLeave = useCallback(() => {
+    mouseX.set(Infinity);
+  }, [mouseX]);
 
   return (
     <motion.div
-      onMouseMove={(e) => mouseX.set(e.pageX)}
-      onMouseLeave={() => mouseX.set(Infinity)}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className={`mx-auto hidden md:flex h-16 gap-4 items-end rounded-2xl bg-gradient-to-r from-cyan-500/10 to-blue-500/10 backdrop-blur-lg border border-cyan-400/20 px-4 pb-3 shadow-lg shadow-cyan-500/20 ${className}`}
     >
       {items.map((item) => (
@@ -25,9 +33,9 @@ function FloatingDockDesktop({ items, className }) {
       ))}
     </motion.div>
   );
-}
+});
 
-function IconContainer({ mouseX, title, icon, href }) {
+const IconContainer = memo(function IconContainer({ mouseX, title, icon, href }) {
   const ref = useRef(null);
 
   const distance = useTransform(mouseX, (val) => {
@@ -37,13 +45,11 @@ function IconContainer({ mouseX, title, icon, href }) {
 
   const widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
   const heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-
   const widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
   const heightTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
 
   const width = useSpring(widthTransform, { mass: 0.1, stiffness: 150, damping: 12 });
   const height = useSpring(heightTransform, { mass: 0.1, stiffness: 150, damping: 12 });
-
   const widthIcon = useSpring(widthTransformIcon, { mass: 0.1, stiffness: 150, damping: 12 });
   const heightIcon = useSpring(heightTransformIcon, { mass: 0.1, stiffness: 150, damping: 12 });
 
@@ -79,15 +85,23 @@ function IconContainer({ mouseX, title, icon, href }) {
       </motion.div>
     </a>
   );
-}
+});
 
 function FloatingDockMobile({ items, className }) {
   const [open, setOpen] = useState(false);
 
+  const toggleOpen = useCallback(() => {
+    setOpen(prev => !prev);
+  }, []);
+
+  const closeMenu = useCallback(() => {
+    setOpen(false);
+  }, []);
+
   return (
     <div className={`md:hidden ${className}`}>
       <motion.button
-        onClick={() => setOpen(!open)}
+        onClick={toggleOpen}
         whileTap={{ scale: 0.9 }}
         className="h-14 w-14 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-lg border-2 border-cyan-400/30 flex items-center justify-center shadow-lg shadow-cyan-500/20 relative z-50"
       >
@@ -101,16 +115,14 @@ function FloatingDockMobile({ items, className }) {
       <AnimatePresence>
         {open && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
+              onClick={closeMenu}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
             />
             
-            {/* Menu */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -126,7 +138,7 @@ function FloatingDockMobile({ items, className }) {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ delay: idx * 0.05 }}
-                  onClick={() => setOpen(false)}
+                  onClick={closeMenu}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   className="h-12 w-12 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors relative group"

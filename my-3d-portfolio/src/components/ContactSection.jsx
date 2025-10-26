@@ -2,9 +2,10 @@
 import { motion } from "framer-motion";
 import DotPattern from "./magicui/dot-pattern";
 import Sparkles from "./magicui/sparkles";
+import { useMemo } from "react";
 
 export default function ContactSection() {
-  const socialLinks = [
+  const socialLinks = useMemo(() => [
     {
       icon: "fab fa-github",
       label: "GitHub",
@@ -26,16 +27,14 @@ export default function ContactSection() {
       color: "hover:text-green-500",
       bgColor: "group-hover:bg-green-500/10",
     },
-  ];
+  ], []);
 
   return (
     <section id="contact" className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden">
-      {/* Background Effects */}
       <DotPattern density="low" />
       <Sparkles density="low" />
       <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-950/5 to-black" />
 
-      {/* Gradient Orbs - Responsive */}
       <div className="absolute top-1/2 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-cyan-500/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/10 rounded-full blur-3xl" />
 
@@ -44,10 +43,9 @@ export default function ContactSection() {
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
           className="text-center"
         >
-          {/* Section Header - Responsive */}
           <motion.h2 
             className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-4"
             initial={{ opacity: 0, scale: 0.8 }}
@@ -64,7 +62,6 @@ export default function ContactSection() {
             viewport={{ once: true }}
           />
 
-          {/* Main Text - Responsive */}
           <motion.p 
             className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 mb-8 sm:mb-12 leading-relaxed px-4"
             initial={{ opacity: 0 }}
@@ -76,7 +73,6 @@ export default function ContactSection() {
             <span className="text-cyan-400 font-bold">amazing</span> together!
           </motion.p>
 
-          {/* Social Links - Responsive Grid */}
           <motion.div 
             className="grid grid-cols-3 sm:flex sm:flex-wrap justify-center gap-4 sm:gap-6 mb-8 sm:mb-12 px-4"
             initial={{ opacity: 0, y: 20 }}
@@ -99,13 +95,8 @@ export default function ContactSection() {
                 className={`group relative w-full sm:w-24 h-20 sm:h-24 rounded-xl sm:rounded-2xl glass-card flex flex-col items-center justify-center transition-all ${social.color}`}
                 title={social.label}
               >
-                {/* Glow Effect */}
                 <div className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 transition-opacity ${social.bgColor}`} />
-                
-                {/* Icon */}
                 <i className={`${social.icon} text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2 relative z-10`} />
-                
-                {/* Label */}
                 <span className="text-[10px] sm:text-xs text-gray-400 group-hover:text-current relative z-10 transition-colors">
                   {social.label}
                 </span>
@@ -113,7 +104,6 @@ export default function ContactSection() {
             ))}
           </motion.div>
 
-          {/* Email Card - Fully Responsive */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -131,7 +121,6 @@ export default function ContactSection() {
             </motion.a>
           </motion.div>
 
-          {/* CTA Button - Responsive */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

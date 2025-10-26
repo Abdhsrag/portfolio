@@ -1,35 +1,67 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import FloatingNav from "../components/FloatingNav";
 import HeroSection from "../components/HeroSection";
-import AboutSection from "../components/AboutSection";
-import ProjectsSection from "../components/ProjectsSection";
-import ContactSection from "../components/ContactSection";
+
+// Lazy load heavy components
+const AboutSection = lazy(() => import("../components/AboutSection"));
+const ProjectsSection = lazy(() => import("../components/ProjectsSection"));
+const ContactSection = lazy(() => import("../components/ContactSection"));
+
+// Loading fallback
+function SectionLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
 
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+    
+    let rafId;
     const handleMouseMove = (e) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20,
+      // Use RAF to throttle mouse updates
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        setMousePosition({
+          x: (e.clientX / window.innerWidth - 0.5) * 20,
+          y: (e.clientY / window.innerHeight - 0.5) * 20,
+        });
+        rafId = null;
       });
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
+
+  if (!isMounted) return null;
 
   return (
     <main className="relative min-h-screen text-white bg-black">
-      {/* ParallaxBackground removed - now inside HeroSection */}
       <FloatingNav />
-      
       <HeroSection mousePosition={mousePosition} />
-      <AboutSection />
-      <ProjectsSection />
-      <ContactSection />
+      
+      <Suspense fallback={<SectionLoader />}>
+        <AboutSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionLoader />}>
+        <ProjectsSection />
+      </Suspense>
+      
+      <Suspense fallback={<SectionLoader />}>
+        <ContactSection />
+      </Suspense>
 
       <footer className="relative py-12 px-6 border-t border-white/5 z-10 bg-black/80 backdrop-blur-sm mb-24">
         <div className="max-w-6xl mx-auto">
