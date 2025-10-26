@@ -1,11 +1,24 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 export default function ProjectCard({ title, desc, link, tech, gradient, icon = "fas fa-rocket", image, index = 0 }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  // Detect if device is touch-enabled
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
+
+  // Handle tap/click for mobile
+  const handleTap = () => {
+    if (isTouchDevice) {
+      setIsHovered(!isHovered);
+    }
+  };
 
   return (
     <motion.div
@@ -13,9 +26,10 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
-      className="group relative h-full"
+      onHoverStart={() => !isTouchDevice && setIsHovered(true)}
+      onHoverEnd={() => !isTouchDevice && setIsHovered(false)}
+      onTap={handleTap}
+      className="group relative h-full cursor-pointer"
     >
       {/* Glow Effect */}
       <motion.div 
@@ -26,7 +40,7 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
       {/* Card Content */}
       <div className="relative glass-card h-full flex flex-col backdrop-blur-xl rounded-2xl border-2 border-transparent group-hover:border-cyan-400/30 transition-all overflow-hidden">
         
-        {/* Image Preview - Expands on Hover */}
+        {/* Image Preview - Expands on Hover/Tap */}
         <AnimatePresence>
           {isHovered && (
             <motion.div 
@@ -72,9 +86,31 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 </>
               )}
+
+              {/* Tap indicator for mobile - only show when image is visible */}
+              {isTouchDevice && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-full p-2"
+                >
+                  <i className="fas fa-times text-white text-sm" />
+                </motion.div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Tap indicator - show when image is hidden on mobile */}
+        {isTouchDevice && !isHovered && image && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute top-4 right-4 z-10 bg-cyan-400/20 backdrop-blur-sm rounded-full p-2 border border-cyan-400/30"
+          >
+            <i className="fas fa-image text-cyan-400 text-sm" />
+          </motion.div>
+        )}
 
         <div className="p-6 sm:p-8 flex flex-col flex-grow">
           {/* Icon Badge */}
@@ -120,6 +156,12 @@ export default function ProjectCard({ title, desc, link, tech, gradient, icon = 
             rel="noreferrer"
             className="group/link inline-flex items-center gap-2 text-cyan-400 font-semibold mt-auto hover:gap-4 transition-all text-sm sm:text-base"
             whileHover={{ x: 5 }}
+            onClick={(e) => {
+              // Prevent link navigation when toggling image on mobile
+              if (isTouchDevice && !isHovered) {
+                e.preventDefault();
+              }
+            }}
           >
             <span>View Project</span>
             <motion.i 
