@@ -1,145 +1,315 @@
 "use client";
-import { motion } from "framer-motion";
-import DotPattern from "./magicui/dot-pattern";
-import Sparkles from "./magicui/sparkles";
-import { useMemo } from "react";
+import { useRef, useEffect, useMemo, useCallback } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function ContactSection() {
-  const socialLinks = useMemo(() => [
-    {
-      icon: "fab fa-github",
-      label: "GitHub",
-      href: "https://github.com/Abdhsrag",
-      color: "hover:text-gray-400",
-      bgColor: "group-hover:bg-gray-400/10",
-    },
-    {
-      icon: "fab fa-linkedin",
-      label: "LinkedIn",
-      href: "https://www.linkedin.com/in/abdelrahmanmohamedosama",
-      color: "hover:text-blue-500",
-      bgColor: "group-hover:bg-blue-500/10",
-    },
-    {
-      icon: "fab fa-whatsapp",
-      label: "WhatsApp",
-      href: "https://wa.me/201277116459",
-      color: "hover:text-green-500",
-      bgColor: "group-hover:bg-green-500/10",
-    },
-  ], []);
+  const sectionRef = useRef(null);
+  const headerRef = useRef(null);
+  const headerBarRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const socialsRef = useRef(null);
+  const emailRef = useRef(null);
+  const ctaRef = useRef(null);
+  const bgGlow1Ref = useRef(null);
+  const bgGlow2Ref = useRef(null);
+
+  const socialLinks = useMemo(
+    () => [
+      {
+        icon: "fab fa-github",
+        label: "GitHub",
+        href: "https://github.com/Abdhsrag",
+        color: "hover:text-gray-400",
+        bgColor: "hover:bg-gray-400/10",
+        glow: "rgba(255,255,255,0.15)",
+      },
+      {
+        icon: "fab fa-linkedin",
+        label: "LinkedIn",
+        href: "https://www.linkedin.com/in/abdelrahmanmohamedosama",
+        color: "hover:text-blue-500",
+        bgColor: "hover:bg-blue-500/10",
+        glow: "rgba(59,130,246,0.15)",
+      },
+      {
+        icon: "fab fa-whatsapp",
+        label: "WhatsApp",
+        href: "https://wa.me/201277116459",
+        color: "hover:text-green-500",
+        bgColor: "hover:bg-green-500/10",
+        glow: "rgba(34,197,94,0.15)",
+      },
+    ],
+    []
+  );
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top bottom",
+        end: "center center",
+        onUpdate: (self) => {
+          if (bgGlow1Ref.current) {
+            gsap.set(bgGlow1Ref.current, {
+              y: -self.progress * 100,
+              opacity: 0.05 + self.progress * 0.1,
+            });
+          }
+          if (bgGlow2Ref.current) {
+            gsap.set(bgGlow2Ref.current, {
+              y: self.progress * 100,
+              opacity: 0.05 + self.progress * 0.1,
+            });
+          }
+        },
+      });
+
+      ScrollTrigger.create({
+        trigger: headerRef.current,
+        start: "top 80%",
+        onEnter: () => {
+          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+          tl.fromTo(
+            headerRef.current,
+            { y: 60, opacity: 0, scale: 0.8, rotateX: -20 },
+            { y: 0, opacity: 1, scale: 1, rotateX: 0, duration: 0.8 }
+          ).fromTo(
+            headerBarRef.current,
+            { width: 0 },
+            { width: "100%", duration: 0.7, ease: "power2.out" },
+            "-=0.4"
+          );
+        },
+        once: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: subtitleRef.current,
+        start: "top 85%",
+        onEnter: () => {
+          const words = subtitleRef.current?.querySelectorAll(".word");
+          if (words) {
+            gsap.fromTo(
+              words,
+              { y: 40, opacity: 0, rotation: 15 },
+              {
+                y: 0,
+                opacity: 1,
+                rotation: 0,
+                duration: 0.6,
+                stagger: 0.08,
+                ease: "back.out(1.4)",
+              }
+            );
+          }
+        },
+        once: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: socialsRef.current,
+        start: "top 80%",
+        onEnter: () => {
+          const items = socialsRef.current?.children;
+          if (!items) return;
+          gsap.fromTo(
+            items,
+            { scale: 0, opacity: 0, rotation: gsap.utils.wrap([-45, 45, -60, 60, -30, 30]) },
+            {
+              scale: 1,
+              opacity: 1,
+              rotation: 0,
+              duration: 0.6,
+              stagger: 0.1,
+              ease: "elastic.out(1, 0.5)",
+            }
+          );
+        },
+        once: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: emailRef.current,
+        start: "top 85%",
+        onEnter: () => {
+          gsap.fromTo(
+            emailRef.current,
+            { y: 50, opacity: 0, scale: 0.8, rotation: -5 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              rotation: 0,
+              duration: 0.8,
+              ease: "back.out(1.7)",
+              delay: 0.3,
+            }
+          );
+        },
+        once: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: ctaRef.current,
+        start: "top 90%",
+        onEnter: () => {
+          gsap.fromTo(
+            ctaRef.current,
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.5 }
+          );
+        },
+        once: true,
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleCtaMouseMove = useCallback((e) => {
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    gsap.to(btn, {
+      x: x * 0.25,
+      y: y * 0.25,
+      scale: 1.05,
+      duration: 0.4,
+      ease: "power2.out",
+    });
+    gsap.to(btn.querySelector(".btn-glow"), {
+      x: x * 0.5,
+      y: y * 0.5,
+      duration: 0.4,
+      ease: "power2.out",
+    });
+  }, []);
+
+  const handleCtaMouseLeave = useCallback((e) => {
+    gsap.to(e.currentTarget, {
+      x: 0,
+      y: 0,
+      scale: 1,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+    gsap.to(e.currentTarget.querySelector(".btn-glow"), {
+      x: 0,
+      y: 0,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  }, []);
 
   return (
-    <section id="contact" className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden">
-      <DotPattern density="low" />
-      <Sparkles density="low" />
+    <section
+      id="contact"
+      ref={sectionRef}
+      className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden"
+    >
       <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-950/5 to-black" />
 
-      <div className="absolute top-1/2 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-cyan-500/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/10 rounded-full blur-3xl" />
+      <div
+        ref={bgGlow1Ref}
+        className="absolute top-1/2 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-cyan-500/10 rounded-full blur-3xl"
+      />
+      <div
+        ref={bgGlow2Ref}
+        className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/10 rounded-full blur-3xl"
+      />
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center"
-        >
-          <motion.h2 
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-4"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+        <div className="text-center">
+          <div
+            ref={headerRef}
+            className="opacity-0"
+            style={{ perspective: "1000px" }}
           >
-            <span className="text-gradient">Let's Connect</span>
-          </motion.h2>
-          <motion.div 
-            className="w-16 sm:w-24 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full mb-8 sm:mb-12"
-            initial={{ width: 0 }}
-            whileInView={{ width: "100%" }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          />
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-4">
+              <span className="text-gradient">Let&apos;s Connect</span>
+            </h2>
+            <div
+              ref={headerBarRef}
+              className="h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full mb-8 sm:mb-12"
+              style={{ width: 0 }}
+            />
+          </div>
 
-          <motion.p 
+          <p
+            ref={subtitleRef}
             className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 mb-8 sm:mb-12 leading-relaxed px-4"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            viewport={{ once: true }}
           >
-            Have a project in mind? Let's build something{" "}
-            <span className="text-cyan-400 font-bold">amazing</span> together!
-          </motion.p>
+            {"Have a project in mind? Let's build something amazing together!"
+              .split(" ")
+              .map((word, i) => (
+                <span key={i} className="word inline-block mr-[0.3em]">
+                  {word}
+                </span>
+              ))}
+          </p>
 
-          <motion.div 
+          <div
+            ref={socialsRef}
             className="grid grid-cols-3 sm:flex sm:flex-wrap justify-center gap-4 sm:gap-6 mb-8 sm:mb-12 px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            viewport={{ once: true }}
           >
-            {socialLinks.map((social, index) => (
-              <motion.a
+            {socialLinks.map((social) => (
+              <a
                 key={social.label}
                 href={social.href}
                 target="_blank"
                 rel="noreferrer"
-                initial={{ opacity: 0, scale: 0 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 + index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.1, y: -5 }}
-                whileTap={{ scale: 0.95 }}
                 className={`group relative w-full sm:w-24 h-20 sm:h-24 rounded-xl sm:rounded-2xl glass-card flex flex-col items-center justify-center transition-all ${social.color}`}
                 title={social.label}
               >
-                <div className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 transition-opacity ${social.bgColor}`} />
+                <div
+                  className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 transition-opacity ${social.bgColor}`}
+                />
                 <i className={`${social.icon} text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2 relative z-10`} />
                 <span className="text-[10px] sm:text-xs text-gray-400 group-hover:text-current relative z-10 transition-colors">
                   {social.label}
                 </span>
-              </motion.a>
+              </a>
             ))}
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            viewport={{ once: true }}
-            className="glass-card p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl mx-4 sm:mx-auto sm:inline-block max-w-full sm:max-w-none"
-          >
-            <p className="text-sm sm:text-base text-gray-400 mb-2 sm:mb-3">Or email me directly at:</p>
-            <motion.a
+          <div ref={emailRef} className="opacity-0">
+            <a
               href="mailto:abdhsrag280@gmail.com"
-              whileHover={{ scale: 1.05 }}
-              className="text-base sm:text-xl md:text-2xl font-bold text-gradient hover:opacity-80 transition-opacity break-all sm:break-normal"
+              className="glass-card p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl mx-4 sm:mx-auto sm:inline-block max-w-full sm:max-w-none block hover:shadow-lg hover:shadow-cyan-500/20 transition-all"
             >
-              abdhsrag280@gmail.com
-            </motion.a>
-          </motion.div>
+              <p className="text-sm sm:text-base text-gray-400 mb-2 sm:mb-3">
+                Or email me directly at:
+              </p>
+              <span className="text-base sm:text-xl md:text-2xl font-bold text-gradient hover:opacity-80 transition-opacity break-all sm:break-normal">
+                abdhsrag280@gmail.com
+              </span>
+            </a>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 }}
-            viewport={{ once: true }}
-            className="mt-8 sm:mt-12 px-4"
+          <div
+            ref={ctaRef}
+            className="mt-8 sm:mt-12 px-4 opacity-0"
           >
-            <motion.a
+            <a
               href="mailto:abdhsrag280@gmail.com"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-bold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-cyan-500/50 transition-all"
+              onMouseMove={handleCtaMouseMove}
+              onMouseLeave={handleCtaMouseLeave}
+              className="cta-btn relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-bold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-cyan-500/50 transition-shadow overflow-hidden"
             >
-              <i className="fas fa-envelope text-base sm:text-lg md:text-xl" />
-              <span className="whitespace-nowrap">Send Me a Message</span>
-              <i className="fas fa-arrow-right text-sm sm:text-base" />
-            </motion.a>
-          </motion.div>
-        </motion.div>
+              <div className="btn-glow absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+              <i className="fas fa-envelope text-base sm:text-lg md:text-xl relative z-10" />
+              <span className="whitespace-nowrap relative z-10">
+                Send Me a Message
+              </span>
+              <i className="fas fa-arrow-right text-sm sm:text-base relative z-10" />
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );

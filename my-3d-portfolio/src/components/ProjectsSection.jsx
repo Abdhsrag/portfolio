@@ -1,9 +1,27 @@
 "use client";
-import { motion } from "framer-motion";
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ProjectCard from "./ProjectCard";
-import AnimatedGrid from "./magicui/animated-grid";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const ENTRANCE_STYLES = [
+  { x: -120, y: 0, rotation: -15, scale: 0.7 },
+  { x: 120, y: 0, rotation: 15, scale: 0.7 },
+  { x: 0, y: 100, rotation: -10, scale: 0.6 },
+  { x: -80, y: -60, rotation: 20, scale: 0.8 },
+  { x: 80, y: -60, rotation: -20, scale: 0.8 },
+  { x: 0, y: -100, rotation: 10, scale: 0.6 },
+];
 
 export default function ProjectsSection() {
+  const sectionRef = useRef(null);
+  const headerRef = useRef(null);
+  const headerBarRef = useRef(null);
+  const gridRef = useRef(null);
+  const footerRef = useRef(null);
+
   const projects = [
     {
       title: "CRUD Store Manager",
@@ -12,7 +30,7 @@ export default function ProjectsSection() {
       tech: ["JavaScript", "LocalStorage", "CSS3"],
       gradient: "from-cyan-400 to-blue-500",
       icon: "fas fa-shopping-cart",
-      image: "/assets/1.png", // Add your image path
+      image: "/assets/1.png",
     },
     {
       title: "Restaurant Dark Mode",
@@ -102,7 +120,6 @@ export default function ProjectsSection() {
       tech: ["Django", "DjangoFastApi", "Python"],
       gradient: "from-orange-400 to-pink-500",
       icon: "fas fa-hand-holding-heart",
-      // No image - backend project
     },
     {
       title: "Charity Frontend",
@@ -121,7 +138,6 @@ export default function ProjectsSection() {
       gradient: "from-purple-400 to-indigo-500",
       icon: "fas fa-hospital",
       image: "/assets/12.png",
-      // No image - backend project
     },
     {
       title: "Bash Database System",
@@ -130,7 +146,6 @@ export default function ProjectsSection() {
       tech: ["Bash"],
       gradient: "from-gray-400 to-gray-600",
       icon: "fas fa-terminal",
-      // No image - CLI project
     },
     {
       title: "Blood Donation System",
@@ -143,68 +158,126 @@ export default function ProjectsSection() {
     },
   ];
 
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: headerRef.current,
+        start: "top 80%",
+        onEnter: () => {
+          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+          tl.fromTo(
+            headerRef.current,
+            { y: 60, opacity: 0, scale: 0.8 },
+            { y: 0, opacity: 1, scale: 1, duration: 0.8 }
+          ).fromTo(
+            headerBarRef.current,
+            { width: 0 },
+            { width: "100%", duration: 0.8, ease: "power2.out" },
+            "-=0.4"
+          );
+        },
+        once: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: gridRef.current,
+        start: "top 70%",
+        onEnter: () => {
+          const cards = gridRef.current?.children;
+          if (!cards) return;
+
+          gsap.fromTo(
+            cards,
+            {
+              x: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].x,
+              y: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].y,
+              rotation: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].rotation,
+              scale: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].scale,
+              opacity: 0,
+            },
+            {
+              x: 0,
+              y: 0,
+              rotation: 0,
+              scale: 1,
+              opacity: 1,
+              duration: 0.7,
+              stagger: { each: 0.06, from: "random" },
+              ease: "back.out(1.4)",
+            }
+          );
+        },
+        once: true,
+      });
+
+      ScrollTrigger.create({
+        trigger: footerRef.current,
+        start: "top 85%",
+        onEnter: () => {
+          gsap.fromTo(
+            footerRef.current,
+            { y: 40, opacity: 0, scale: 0.9 },
+            { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.7)" }
+          );
+        },
+        once: true,
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section id="projects" className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden">
-      {/* Background Effects */}
-      <AnimatedGrid />
+    <section
+      id="projects"
+      ref={sectionRef}
+      className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden"
+    >
       <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/5 to-black" />
 
       <div className="max-w-7xl mx-auto relative z-10">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="text-center mb-12 sm:mb-20"
+        <div
+          ref={headerRef}
+          className="text-center mb-12 sm:mb-20 opacity-0"
         >
-          <motion.h2 
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-4"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-          >
+          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-4">
             <span className="text-gradient">Featured Projects</span>
-          </motion.h2>
-          <motion.div 
-            className="w-16 sm:w-24 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full mb-4 sm:mb-6"
-            initial={{ width: 0 }}
-            whileInView={{ width: "100%" }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
+          </h2>
+          <div
+            ref={headerBarRef}
+            className="h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full mb-4 sm:mb-6"
+            style={{ width: 0 }}
           />
           <p className="text-base sm:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-4">
-            Here are some of my recent projects that showcase my skills and creativity
+            Here are some of my recent projects that showcase my skills and
+            creativity
           </p>
-        </motion.div>
+        </div>
 
-        {/* Projects Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div
+          ref={gridRef}
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+        >
           {projects.map((project, index) => (
             <ProjectCard key={index} index={index} {...project} />
           ))}
         </div>
 
-        {/* View More Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-12 sm:mt-16 px-4"
+        <div
+          ref={footerRef}
+          className="text-center mt-12 sm:mt-16 px-4 opacity-0"
         >
-          <motion.a
+          <a
             href="https://github.com/Abdhsrag"
             target="_blank"
             rel="noreferrer"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full font-semibold text-sm sm:text-base lg:text-lg group"
+            className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full font-semibold text-sm sm:text-base lg:text-lg group hover:shadow-lg hover:shadow-purple-500/30 transition-all"
           >
             <i className="fab fa-github text-xl sm:text-2xl" />
             <span>View More on GitHub</span>
             <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform" />
-          </motion.a>
-        </motion.div>
+          </a>
+        </div>
       </div>
     </section>
   );
