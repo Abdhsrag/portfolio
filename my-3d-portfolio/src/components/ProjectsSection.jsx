@@ -6,15 +6,6 @@ import ProjectCard from "./ProjectCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const ENTRANCE_STYLES = [
-  { x: -120, y: 0, rotation: -15, scale: 0.7 },
-  { x: 120, y: 0, rotation: 15, scale: 0.7 },
-  { x: 0, y: 100, rotation: -10, scale: 0.6 },
-  { x: -80, y: -60, rotation: 20, scale: 0.8 },
-  { x: 80, y: -60, rotation: -20, scale: 0.8 },
-  { x: 0, y: -100, rotation: 10, scale: 0.6 },
-];
-
 export default function ProjectsSection() {
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
@@ -24,12 +15,47 @@ export default function ProjectsSection() {
 
   const projects = [
     {
+      title: 'BM Electronics',
+      desc: "BM Electronics is a website for the international company of electronic devices.",
+      link: "https://www.bm-electrics.com/",
+      tech: ["React", "Vite", "TailwindCSS", "TanStack-query", "axios", "Zustand"],
+      gradient: "from-purple-500 to-pink-500",
+      image: "/assets/bm-elctron.png",
+      icon: "fas fa-laptop-code",
+    },
+    {
+      title: "Connecto platform",
+      desc: "Connecto is a Saas platform to connect multi-platforms togther in a single dashboard impored by strop Ai tools",
+      link: "https://platform.connecto-me.com/",
+      tech: ["React", "Vite", "TailwindCSS", "TanStack-query", "axios", "Zustand", "motion"],
+      gradient: "from-blue-600 to-cyan-400",
+      icon: "fas fa-network-wired",
+      image: "/assets/connecto.png",
+    },
+    {
+      title: "KaraKeeb",
+      desc: "KaraKeeb is a website for a modern furnuter store with slick desgin and attractive colors",
+      link: "https://www.karakeeb.com.eg/",
+      tech: ["React", "Vite", "TailwindCSS", "TanStack-query", "axios", "Zustand"],
+      gradient: "from-amber-500 to-orange-600",
+      icon: "fas fa-chair",
+      image: "/assets/karakeeb.png",
+    },
+    {
+      title: "Connecto AM DashBoard",
+      desc: "Connecto AM DashBoard is a dashboard for managing AM accounts",
+      tech: ["React", "Vite", "TailwindCSS", "TanStack-query", "axios", "Zustand"],
+      gradient: "from-teal-500 to-emerald-400",
+      icon: "fas fa-users-cog",
+      image: "/assets/am-connecto.png",
+    },
+    {
       title: "CRUD Store Manager",
       desc: "A comprehensive CRUD system mimicking store operations with full product management capabilities",
       link: "https://abdhsrag.github.io/Cruds/",
       tech: ["JavaScript", "LocalStorage", "CSS3"],
-      gradient: "from-cyan-400 to-blue-500",
-      icon: "fas fa-shopping-cart",
+      gradient: "from-cyan-500 to-blue-600",
+      icon: "fas fa-database",
       image: "/assets/1.png",
     },
     {
@@ -37,7 +63,7 @@ export default function ProjectsSection() {
       desc: "Modern restaurant page featuring dark mode toggle with smooth transitions and elegant design",
       link: "https://abdhsrag.github.io/darkmood/",
       tech: ["HTML5", "CSS3", "JavaScript"],
-      gradient: "from-purple-400 to-pink-500",
+      gradient: "from-rose-500 to-red-600",
       icon: "fas fa-utensils",
       image: "/assets/2.png",
     },
@@ -46,8 +72,8 @@ export default function ProjectsSection() {
       desc: "Classic game with score tracking and smooth animations where you play against AI",
       link: "https://abdhsrag.github.io/Rock-Paper-Scissors/",
       tech: ["JavaScript", "Game Logic", "CSS3"],
-      gradient: "from-yellow-400 to-orange-500",
-      icon: "fas fa-hand-rock",
+      gradient: "from-yellow-400 to-amber-600",
+      icon: "fas fa-gamepad",
       image: "/assets/3.png",
     },
     {
@@ -55,7 +81,7 @@ export default function ProjectsSection() {
       desc: "Professional landing page for solar power company with fully responsive design",
       link: "https://abdhsrag.github.io/landing-page/",
       tech: ["HTML5", "CSS3", "Bootstrap"],
-      gradient: "from-green-400 to-cyan-500",
+      gradient: "from-green-500 to-teal-400",
       icon: "fas fa-solar-panel",
       image: "/assets/4.png",
     },
@@ -64,8 +90,8 @@ export default function ProjectsSection() {
       desc: "Beautiful to-do list application with modern UI and calming background design",
       link: "https://abdhsrag.github.io/to-do-list/",
       tech: ["JavaScript", "LocalStorage", "CSS3"],
-      gradient: "from-pink-400 to-red-500",
-      icon: "fas fa-list-check",
+      gradient: "from-fuchsia-500 to-purple-600",
+      icon: "fas fa-clipboard-list",
       image: "/assets/5.png",
     },
     {
@@ -73,7 +99,7 @@ export default function ProjectsSection() {
       desc: "Elegant landing page for interior design company with sophisticated layout",
       link: "https://abdhsrag.github.io/landing-page-for-interior-design-company/",
       tech: ["HTML5", "CSS3", "JavaScript"],
-      gradient: "from-indigo-400 to-purple-500",
+      gradient: "from-indigo-500 to-violet-600",
       icon: "fas fa-couch",
       image: "/assets/6.png",
     },
@@ -82,8 +108,8 @@ export default function ProjectsSection() {
       desc: "Calming and simple animal gallery featuring smooth animations and transitions",
       link: "https://abdhsrag.github.io/gallery/",
       tech: ["HTML5", "CSS3", "JavaScript"],
-      gradient: "from-teal-400 to-green-500",
-      icon: "fas fa-image",
+      gradient: "from-emerald-500 to-green-600",
+      icon: "fas fa-paw",
       image: "/assets/7.png",
     },
     {
@@ -91,8 +117,8 @@ export default function ProjectsSection() {
       desc: "Small online shop with login system, shopping cart, and clean design",
       link: "https://abdhsrag.github.io/shopping-cart/",
       tech: ["JavaScript", "CSS3", "Bootstrap"],
-      gradient: "from-orange-400 to-red-500",
-      icon: "fas fa-cart-shopping",
+      gradient: "from-orange-500 to-red-500",
+      icon: "fas fa-shopping-cart",
       image: "/assets/8.png",
     },
     {
@@ -100,7 +126,7 @@ export default function ProjectsSection() {
       desc: "Full-stack e-commerce platform with Django backend and modern frontend",
       link: "https://github.com/Abdhsrag/E-commer-fullstack-django-",
       tech: ["Django", "DjangoFastApi", "CSS3", "Bootstrap", "Python"],
-      gradient: "from-red-400 to-blue-500",
+      gradient: "from-sky-500 to-indigo-600",
       icon: "fas fa-store",
       image: "/assets/9.png",
     },
@@ -109,7 +135,7 @@ export default function ProjectsSection() {
       desc: "Movie catalog website with ratings, reviews, and detailed information",
       link: "https://github.com/Abdhsrag/moviesite",
       tech: ["React", "CSS3", "Bootstrap", "JavaScript"],
-      gradient: "from-blue-400 to-orange-500",
+      gradient: "from-violet-500 to-pink-500",
       icon: "fas fa-film",
       image: "/assets/10.png",
     },
@@ -118,16 +144,16 @@ export default function ProjectsSection() {
       desc: "Robust backend system for charity platform with API endpoints",
       link: "https://github.com/Abdhsrag/charity",
       tech: ["Django", "DjangoFastApi", "Python"],
-      gradient: "from-orange-400 to-pink-500",
-      icon: "fas fa-hand-holding-heart",
+      gradient: "from-red-400 to-rose-600",
+      icon: "fas fa-server",
     },
     {
       title: "Charity Frontend",
       desc: "Modern frontend interface for charity platform with responsive design",
       link: "https://github.com/Abdhsrag/charity-front",
       tech: ["React", "JavaScript", "Bootstrap", "CSS"],
-      gradient: "from-pink-400 to-purple-500",
-      icon: "fas fa-hands-helping",
+      gradient: "from-pink-500 to-rose-400",
+      icon: "fas fa-hand-holding-heart",
       image: "/assets/11.png",
     },
     {
@@ -135,7 +161,7 @@ export default function ProjectsSection() {
       desc: "Hospital management system built using Odoo ERP framework",
       link: "https://github.com/Abdhsrag/hospital-mangement-odoo",
       tech: ["Odoo", "Python"],
-      gradient: "from-purple-400 to-indigo-500",
+      gradient: "from-blue-500 to-indigo-500",
       icon: "fas fa-hospital",
       image: "/assets/12.png",
     },
@@ -144,7 +170,7 @@ export default function ProjectsSection() {
       desc: "Database management system mimicking SQL operations using Bash scripting",
       link: "https://github.com/Abdhsrag/bashProject",
       tech: ["Bash"],
-      gradient: "from-gray-400 to-gray-600",
+      gradient: "from-slate-600 to-gray-800",
       icon: "fas fa-terminal",
     },
     {
@@ -152,8 +178,8 @@ export default function ProjectsSection() {
       desc: "Comprehensive blood donation matching system with AI-powered notifications and inventory management",
       link: "https://github.com/Abdhsrag/final-project",
       tech: ["DjangoFastApi", "React", "Django", "LangChain", "PostgreSQL", "GoogleMaps"],
-      gradient: "from-red-500 to-pink-600",
-      icon: "fas fa-droplet",
+      gradient: "from-red-600 to-pink-700",
+      icon: "fas fa-heartbeat",
       image: "/assets/13.png",
     },
   ];
@@ -189,10 +215,21 @@ export default function ProjectsSection() {
           gsap.fromTo(
             cards,
             {
-              x: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].x,
-              y: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].y,
-              rotation: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].rotation,
-              scale: (i) => ENTRANCE_STYLES[i % ENTRANCE_STYLES.length].scale,
+              x: (i) => {
+                const side = i % 2 === 0 ? -1 : 1;
+                return side * (100 + (i * 15) % 80);
+              },
+              y: (i) => {
+                const dir = i % 3 === 0 ? -1 : (i % 3 === 1 ? 1 : 0);
+                return dir * (60 + (i * 20) % 60);
+              },
+              rotation: (i) => {
+                const dir = i % 2 === 0 ? -1 : 1;
+                return dir * (10 + (i * 7) % 16);
+              },
+              scale: (i) => {
+                return 0.65 + (i % 5) * 0.05;
+              },
               opacity: 0,
             },
             {
@@ -201,7 +238,7 @@ export default function ProjectsSection() {
               rotation: 0,
               scale: 1,
               opacity: 1,
-              duration: 0.7,
+              duration: 0.75,
               stagger: { each: 0.06, from: "random" },
               ease: "back.out(1.4)",
             }
@@ -259,7 +296,11 @@ export default function ProjectsSection() {
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
         >
           {projects.map((project, index) => (
-            <ProjectCard key={index} index={index} {...project} />
+            <ProjectCard
+              key={project.title.toLowerCase().replace(/\s+/g, "-")}
+              index={index}
+              {...project}
+            />
           ))}
         </div>
 

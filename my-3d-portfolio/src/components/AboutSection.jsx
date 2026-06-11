@@ -154,28 +154,28 @@ export default function AboutSection() {
           const skillCards = Array.from(skillsGridRef.current?.children || []);
           if (!skillCards.length) return;
 
-          gsap.set(skillCards, { opacity: 0, scale: 0.3, y: 60 });
+          gsap.set(skillCards, {
+            opacity: 0,
+            scale: 0.4,
+            y: 80,
+            rotationX: -60,
+            rotationY: 15,
+            transformOrigin: "50% 50% -100px"
+          });
 
           gsap.to(skillCards, {
             opacity: 1,
             scale: 1,
             y: 0,
-            duration: 0.6,
-            stagger: { each: 0.04, from: "edges" },
-            ease: "back.out(1.7)",
-            onComplete: () => {
-              skillCards.forEach((card) => {
-                const glow = card.querySelector(".skill-glow");
-                card.addEventListener("mouseenter", () => {
-                  gsap.to(card, { scale: 1.15, y: -8, duration: 0.3, ease: "power2.out" });
-                  if (glow) gsap.to(glow, { opacity: 0.25, duration: 0.3 });
-                });
-                card.addEventListener("mouseleave", () => {
-                  gsap.to(card, { scale: 1, y: 0, duration: 0.3, ease: "power2.out" });
-                  if (glow) gsap.to(glow, { opacity: 0, duration: 0.3 });
-                });
-              });
+            rotationX: 0,
+            rotationY: 0,
+            duration: 0.85,
+            stagger: {
+              grid: "auto",
+              from: "center",
+              each: 0.05
             },
+            ease: "back.out(1.5)"
           });
         },
         once: true,
@@ -266,29 +266,114 @@ export default function AboutSection() {
           <div
             ref={skillsGridRef}
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
+            style={{ perspective: "1200px" }}
           >
             {skills.map((skill) => (
-              <div
-                key={skill.name}
-                className="flex flex-col items-center gap-3 glass-card p-6 rounded-xl relative overflow-hidden cursor-pointer"
-                style={{ opacity: 0 }}
-              >
-                <div
-                  className="skill-glow absolute inset-0 opacity-0 blur-xl pointer-events-none"
-                  style={{ background: skill.color }}
-                />
-                <i
-                  className={`${skill.icon} text-4xl md:text-5xl relative z-10`}
-                  style={{ color: skill.color }}
-                />
-                <span className="text-xs text-gray-400 relative z-10 font-medium text-center">
-                  {skill.name}
-                </span>
-              </div>
+              <SkillCard key={skill.name} skill={skill} />
             ))}
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function SkillCard({ skill }) {
+  const cardRef = useRef(null);
+  const glowRef = useRef(null);
+  const iconRef = useRef(null);
+
+  const handleMouseMove = useCallback((e) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / centerY) * -12;
+    const rotateY = ((x - centerX) / centerX) * 12;
+
+    const glowX = (x / rect.width) * 100;
+    const glowY = (y / rect.height) * 100;
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      scale: 1.1,
+      duration: 0.3,
+      ease: "power2.out"
+    });
+
+    if (glowRef.current) {
+      gsap.to(glowRef.current, {
+        opacity: 0.4,
+        background: `radial-gradient(circle at ${glowX}% ${glowY}%, ${skill.color}88 0%, transparent 60%)`,
+        duration: 0.2
+      });
+    }
+
+    if (iconRef.current) {
+      gsap.to(iconRef.current, {
+        scale: 1.15,
+        rotationZ: rotateY * 0.5,
+        duration: 0.3,
+        ease: "power2.out"
+      });
+    }
+  }, [skill.color]);
+
+  const handleMouseLeave = useCallback(() => {
+    const card = cardRef.current;
+    if (card) {
+      gsap.to(card, {
+        rotateX: 0,
+        rotateY: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: "power3.out"
+      });
+    }
+    if (glowRef.current) {
+      gsap.to(glowRef.current, {
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    }
+    if (iconRef.current) {
+      gsap.to(iconRef.current, {
+        scale: 1,
+        rotationZ: 0,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    }
+  }, []);
+
+  return (
+    <div
+      ref={cardRef}
+      className="flex flex-col items-center gap-3 glass-card p-6 rounded-xl relative overflow-hidden cursor-pointer"
+      style={{ opacity: 0, transformStyle: "preserve-3d" }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div
+        ref={glowRef}
+        className="skill-glow absolute inset-0 opacity-0 blur-xl pointer-events-none transition-opacity duration-300"
+        style={{ mixBlendMode: "screen" }}
+      />
+      <i
+        ref={iconRef}
+        className={`${skill.icon} text-4xl md:text-5xl relative z-10 transition-transform duration-200`}
+        style={{ color: skill.color }}
+      />
+      <span className="text-xs text-gray-400 relative z-10 font-medium text-center pointer-events-none">
+        {skill.name}
+      </span>
+    </div>
   );
 }
