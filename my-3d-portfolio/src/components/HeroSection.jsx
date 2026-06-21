@@ -30,7 +30,6 @@ export default function HeroSection() {
   const socialsRef = useRef(null);
   const scrollRef = useRef(null);
 
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = useState(false);
   const [show3D, setShow3D] = useState(false);
   const [startTypewriter, setStartTypewriter] = useState(false);
@@ -170,31 +169,7 @@ export default function HeroSection() {
     return () => ctx.revert();
   }, []);
 
-  const handleMouseMove = useCallback(
-    (e) => {
-      if (isMobile) return;
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
-      const y = -(e.clientY / window.innerHeight) * 2 + 1;
-      setMousePosition({ x, y });
-    },
-    [isMobile]
-  );
 
-  useEffect(() => {
-    let rafId;
-    const throttled = (e) => {
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        handleMouseMove(e);
-        rafId = null;
-      });
-    };
-    window.addEventListener("mousemove", throttled, { passive: true });
-    return () => {
-      window.removeEventListener("mousemove", throttled);
-      if (rafId) cancelAnimationFrame(rafId);
-    };
-  }, [handleMouseMove]);
 
   return (
     <section
@@ -204,7 +179,7 @@ export default function HeroSection() {
     >
       {show3D && (
         <div className="hero-scene absolute inset-0 z-0">
-          <HeroScene3D mousePosition={mousePosition} isMobile={isMobile} />
+          <HeroScene3D isMobile={isMobile} />
         </div>
       )}
 
