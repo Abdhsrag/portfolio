@@ -4,7 +4,14 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ProjectCard from "./ProjectCard";
 
-gsap.registerPlugin(ScrollTrigger);
+const ENTRANCE_STYLES = [
+  { x: -120, y: 0, rotation: -8, scale: 0.7 },
+  { x: 120, y: 0, rotation: 8, scale: 0.7 },
+  { x: 0, y: -80, rotation: 6, scale: 0.8 },
+  { x: 0, y: 80, rotation: -6, scale: 0.8 },
+  { x: -80, y: -60, rotation: -12, scale: 0.65 },
+  { x: 80, y: 60, rotation: 12, scale: 0.65 },
+];
 
 export default function ProjectsSection() {
   const sectionRef = useRef(null);
@@ -186,79 +193,79 @@ export default function ProjectsSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: headerRef.current,
-        start: "top 80%",
-        onEnter: () => {
-          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-          tl.fromTo(
-            headerRef.current,
-            { y: 60, opacity: 0, scale: 0.8 },
-            { y: 0, opacity: 1, scale: 1, duration: 0.8 }
-          ).fromTo(
-            headerBarRef.current,
-            { width: 0 },
-            { width: "100%", duration: 0.8, ease: "power2.out" },
-            "-=0.4"
-          );
-        },
-        once: true,
-      });
+      gsap.fromTo(
+        headerRef.current,
+        { y: 60, opacity: 0, scale: 0.8 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+      gsap.fromTo(
+        headerBarRef.current,
+        { width: 0 },
+        {
+          width: "100%",
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
 
-      ScrollTrigger.create({
-        trigger: gridRef.current,
-        start: "top 70%",
-        onEnter: () => {
-          const cards = gridRef.current?.children;
-          if (!cards) return;
-
+      const cards = Array.from(gridRef.current?.children || []);
+      if (cards.length) {
+        cards.forEach((card, i) => {
+          const s = ENTRANCE_STYLES[i % ENTRANCE_STYLES.length];
           gsap.fromTo(
-            cards,
-            {
-              x: (i) => {
-                const side = i % 2 === 0 ? -1 : 1;
-                return side * (100 + (i * 15) % 80);
-              },
-              y: (i) => {
-                const dir = i % 3 === 0 ? -1 : (i % 3 === 1 ? 1 : 0);
-                return dir * (60 + (i * 20) % 60);
-              },
-              rotation: (i) => {
-                const dir = i % 2 === 0 ? -1 : 1;
-                return dir * (10 + (i * 7) % 16);
-              },
-              scale: (i) => {
-                return 0.65 + (i % 5) * 0.05;
-              },
-              opacity: 0,
-            },
+            card,
+            { x: s.x, y: s.y, rotation: s.rotation, scale: s.scale, opacity: 0 },
             {
               x: 0,
               y: 0,
               rotation: 0,
               scale: 1,
               opacity: 1,
-              duration: 0.75,
-              stagger: { each: 0.06, from: "random" },
-              ease: "back.out(1.4)",
+              duration: 0.7,
+              delay: i * 0.08,
+              ease: "expo.out",
+              scrollTrigger: {
+                trigger: card,
+                start: "top 85%",
+                toggleActions: "play none none reverse",
+              },
             }
           );
-        },
-        once: true,
-      });
+        });
+      }
 
-      ScrollTrigger.create({
-        trigger: footerRef.current,
-        start: "top 85%",
-        onEnter: () => {
-          gsap.fromTo(
-            footerRef.current,
-            { y: 40, opacity: 0, scale: 0.9 },
-            { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.7)" }
-          );
-        },
-        once: true,
-      });
+      gsap.fromTo(
+        footerRef.current,
+        { y: 40, opacity: 0, scale: 0.9 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
     }, sectionRef);
 
     return () => ctx.revert();

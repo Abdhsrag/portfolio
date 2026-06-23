@@ -103,7 +103,6 @@ footer {
 .glass-card {
   @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl transition-all duration-300;
   transform: translateZ(0);
-  will-change: transform, box-shadow;
 }
 
 .glass-card:hover {

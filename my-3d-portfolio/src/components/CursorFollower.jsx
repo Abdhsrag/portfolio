@@ -1,20 +1,28 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef, useCallback } from "react";
 import gsap from "gsap";
 
-export default function CursorFollower() {
+function throttle(fn, limit) {
+  let inThrottle;
+  return (...args) => {
+    if (!inThrottle) {
+      fn(...args);
+      inThrottle = true;
+      setTimeout(() => (inThrottle = false), limit);
+    }
+  };
+}
+
+function CursorFollower() {
   const cursorRef = useRef(null);
   const trailRef = useRef(null);
 
-  useEffect(() => {
-    const cursor = cursorRef.current;
-    const trail = trailRef.current;
-    if (!cursor || !trail) return;
-
-    gsap.set(cursor, { x: -100, y: -100 });
-    gsap.set(trail, { x: -100, y: -100 });
-
-    const mouseMove = (e) => {
+  const mouseMove = useCallback(
+    throttle((e) => {
+      const cursor = cursorRef.current;
+      const trail = trailRef.current;
+      if (!cursor || !trail) return;
+      
       gsap.to(cursor, {
         x: e.clientX,
         y: e.clientY,
@@ -27,11 +35,21 @@ export default function CursorFollower() {
         duration: 0.5,
         ease: "power2.out",
       });
-    };
+    }, 16),
+    []
+  );
 
-    window.addEventListener("mousemove", mouseMove);
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    const trail = trailRef.current;
+    if (!cursor || !trail) return;
+
+    gsap.set(cursor, { x: -100, y: -100 });
+    gsap.set(trail, { x: -100, y: -100 });
+
+    window.addEventListener("mousemove", mouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", mouseMove);
-  }, []);
+  }, [mouseMove]);
 
   return (
     <>
@@ -48,3 +66,5 @@ export default function CursorFollower() {
     </>
   );
 }
+
+export default memo(CursorFollower);

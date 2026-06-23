@@ -1,10 +1,8 @@
 "use client";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const HeroScene3D = dynamic(() => import("./HeroScene3D"), {
   ssr: false,
@@ -34,8 +32,8 @@ export default function HeroSection() {
   const [show3D, setShow3D] = useState(false);
   const [startTypewriter, setStartTypewriter] = useState(false);
 
-  const hiChars = splitText("Hi, I'm");
-  const nameChars = splitText("Abdelrahman");
+  const hiChars = useMemo(() => splitText("Hi, I'm"), []);
+  const nameChars = useMemo(() => splitText("Abdelrahman"), []);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 1024);

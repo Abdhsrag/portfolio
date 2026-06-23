@@ -2,14 +2,14 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import FloatingNav from "../components/FloatingNav";
-import HeroSection from "../components/HeroSection";
-import AboutSection from "../components/AboutSection";
-import ProjectsSection from "../components/ProjectsSection";
-import ContactSection from "../components/ContactSection";
-import CursorFollower from "../components/CursorFollower";
-
-gsap.registerPlugin(ScrollTrigger);
+import HeroSection from "@/components/HeroSection";
+import AboutSection from "@/components/AboutSection";
+import ProjectsSection from "@/components/ProjectsSection";
+import ContactSection from "@/components/ContactSection";
+import FloatingNav from "@/components/FloatingNav";
+import CursorFollower from "@/components/CursorFollower";
+import GSAPProvider from "@/components/GSAPProvider";
+import "./globals.css";
 
 export default function Home() {
   const progressRef = useRef(null);
@@ -48,10 +48,12 @@ export default function Home() {
 
       <CursorFollower />
       <FloatingNav />
-      <HeroSection />
-      <AboutSection />
-      <ProjectsSection />
-      <ContactSection />
+      <GSAPProvider>
+        <HeroSection />
+        <AboutSection />
+        <ProjectsSection />
+        <ContactSection />
+      </GSAPProvider>
 
       <footer className="relative py-12 px-6 border-t border-white/5 bg-black/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto">

@@ -1,9 +1,9 @@
 "use client";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { memo, useRef, useEffect, useState, useCallback } from "react";
 import gsap from "gsap";
 import Image from "next/image";
 
-export default function ProjectCard({
+function ProjectCard({
   title,
   desc,
   link,
@@ -43,7 +43,8 @@ export default function ProjectCard({
     const glowY = (y / rect.height) * 100;
     if (glowRef.current) {
       gsap.set(glowRef.current, {
-        background: `radial-gradient(circle at ${glowX}% ${glowY}%, rgba(0, 217, 255, 0.15), transparent 60%)`,
+        "--glow-x": `${glowX}%`,
+        "--glow-y": `${glowY}%`,
       });
     }
   }, []);
@@ -83,6 +84,7 @@ export default function ProjectCard({
     <div
       ref={cardRef}
       className="group relative h-full perspective-1000"
+      style={{ opacity: 0, willChange: "transform, opacity" }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -100,7 +102,10 @@ export default function ProjectCard({
       <div
         ref={glowRef}
         className="absolute inset-0 rounded-2xl opacity-0 pointer-events-none z-10 transition-opacity duration-300"
-        style={{ mixBlendMode: "screen" }}
+        style={{
+          mixBlendMode: "screen",
+          background: "radial-gradient(circle at var(--glow-x, 50%) var(--glow-y, 50%), rgba(0, 217, 255, 0.15), transparent 60%)",
+        }}
       />
 
       <div
@@ -183,3 +188,5 @@ export default function ProjectCard({
     </div>
   );
 }
+
+export default memo(ProjectCard);

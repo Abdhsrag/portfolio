@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import gsap from "gsap";
 
-export default function FloatingNav() {
+function FloatingNav() {
   const [mounted, setMounted] = useState(false);
   const dockRef = useRef(null);
 
@@ -83,3 +83,5 @@ export default function FloatingNav() {
     document.body
   );
 }
+
+export default memo(FloatingNav);

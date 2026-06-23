@@ -3,8 +3,6 @@ import { useRef, useEffect, useMemo, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger);
-
 export default function ContactSection() {
   const sectionRef = useRef(null);
   const headerRef = useRef(null);
@@ -48,126 +46,200 @@ export default function ContactSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top bottom",
-        end: "center center",
-        onUpdate: (self) => {
-          if (bgGlow1Ref.current) {
-            gsap.set(bgGlow1Ref.current, {
-              y: -self.progress * 100,
-              opacity: 0.05 + self.progress * 0.1,
+      // CSS-based parallax for background glows (no GSAP onUpdate)
+      const section = sectionRef.current;
+      if (section) {
+        const glow1 = bgGlow1Ref.current;
+        const glow2 = bgGlow2Ref.current;
+        
+        const updateParallax = () => {
+          const rect = section.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+          const start = -rect.height;
+          const end = viewportHeight;
+          const progress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / (viewportHeight + rect.height)));
+          
+          if (glow1) {
+            glow1.style.setProperty("--parallax-y", `${-progress * 100}%`);
+            glow1.style.setProperty("--parallax-opacity", 0.05 + progress * 0.1);
+          }
+          if (glow2) {
+            glow2.style.setProperty("--parallax-y", `${progress * 100}%`);
+            glow2.style.setProperty("--parallax-opacity", 0.05 + progress * 0.1);
+          }
+        };
+
+        // Throttle to 30fps
+        let ticking = false;
+        const onScroll = () => {
+          if (!ticking) {
+            requestAnimationFrame(() => {
+              updateParallax();
+              ticking = false;
             });
+            ticking = true;
           }
-          if (bgGlow2Ref.current) {
-            gsap.set(bgGlow2Ref.current, {
-              y: self.progress * 100,
-              opacity: 0.05 + self.progress * 0.1,
-            });
+        };
+        
+        window.addEventListener("scroll", onScroll, { passive: true });
+        updateParallax(); // Initial
+      }
+
+      gsap.fromTo(
+        headerRef.current,
+        { y: 60, opacity: 0, scale: 0.8, rotateX: -20 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotateX: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+      gsap.fromTo(
+        headerBarRef.current,
+        { width: 0 },
+        {
+          width: "100%",
+          duration: 0.7,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: headerRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
+
+      const words = subtitleRef.current?.querySelectorAll(".word");
+      if (words) {
+        gsap.fromTo(
+          words,
+          { y: 40, opacity: 0, rotation: 15 },
+          {
+            y: 0,
+            opacity: 1,
+            rotation: 0,
+            duration: 0.6,
+            stagger: 0.08,
+            ease: "back.out(1.4)",
+            scrollTrigger: {
+              trigger: subtitleRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
           }
-        },
-      });
+        );
+      }
 
-      ScrollTrigger.create({
-        trigger: headerRef.current,
-        start: "top 80%",
-        onEnter: () => {
-          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-          tl.fromTo(
-            headerRef.current,
-            { y: 60, opacity: 0, scale: 0.8, rotateX: -20 },
-            { y: 0, opacity: 1, scale: 1, rotateX: 0, duration: 0.8 }
-          ).fromTo(
-            headerBarRef.current,
-            { width: 0 },
-            { width: "100%", duration: 0.7, ease: "power2.out" },
-            "-=0.4"
-          );
-        },
-        once: true,
-      });
-
-      ScrollTrigger.create({
-        trigger: subtitleRef.current,
-        start: "top 85%",
-        onEnter: () => {
-          const words = subtitleRef.current?.querySelectorAll(".word");
-          if (words) {
-            gsap.fromTo(
-              words,
-              { y: 40, opacity: 0, rotation: 15 },
-              {
-                y: 0,
-                opacity: 1,
-                rotation: 0,
-                duration: 0.6,
-                stagger: 0.08,
-                ease: "back.out(1.4)",
-              }
-            );
+      const items = socialsRef.current?.children;
+      if (items) {
+        gsap.fromTo(
+          items,
+          { scale: 0, opacity: 0, rotation: gsap.utils.wrap([-45, 45, -60, 60, -30, 30]) },
+          {
+            scale: 1,
+            opacity: 1,
+            rotation: 0,
+            duration: 0.6,
+            stagger: 0.1,
+            ease: "elastic.out(1, 0.5)",
+            scrollTrigger: {
+              trigger: socialsRef.current,
+              start: "top 80%",
+              toggleActions: "play none none reverse",
+            },
           }
-        },
-        once: true,
-      });
+        );
+      }
 
-      ScrollTrigger.create({
-        trigger: socialsRef.current,
-        start: "top 80%",
-        onEnter: () => {
-          const items = socialsRef.current?.children;
-          if (!items) return;
-          gsap.fromTo(
-            items,
-            { scale: 0, opacity: 0, rotation: gsap.utils.wrap([-45, 45, -60, 60, -30, 30]) },
-            {
-              scale: 1,
-              opacity: 1,
-              rotation: 0,
-              duration: 0.6,
-              stagger: 0.1,
-              ease: "elastic.out(1, 0.5)",
-            }
-          );
-        },
-        once: true,
-      });
+      gsap.fromTo(
+        emailRef.current,
+        { y: 50, opacity: 0, scale: 0.8, rotation: -5 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          rotation: 0,
+          duration: 0.8,
+          ease: "back.out(1.7)",
+          delay: 0.3,
+          scrollTrigger: {
+            trigger: emailRef.current,
+            start: "top 85%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
 
-      ScrollTrigger.create({
-        trigger: emailRef.current,
-        start: "top 85%",
-        onEnter: () => {
-          gsap.fromTo(
-            emailRef.current,
-            { y: 50, opacity: 0, scale: 0.8, rotation: -5 },
-            {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              rotation: 0,
-              duration: 0.8,
-              ease: "back.out(1.7)",
-              delay: 0.3,
-            }
-          );
-        },
-        once: true,
-      });
-
-      ScrollTrigger.create({
-        trigger: ctaRef.current,
-        start: "top 90%",
-        onEnter: () => {
-          gsap.fromTo(
-            ctaRef.current,
-            { y: 30, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", delay: 0.5 }
-          );
-        },
-        once: true,
-      });
+      gsap.fromTo(
+        ctaRef.current,
+        { y: 30, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: "power3.out",
+          delay: 0.5,
+          scrollTrigger: {
+            trigger: ctaRef.current,
+            start: "top 90%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
     }, sectionRef);
 
-    return () => ctx.revert();
+    // Separate cleanup for parallax
+    const section = sectionRef.current;
+    let parallaxCleanup = () => {};
+    if (section) {
+      const glow1 = bgGlow1Ref.current;
+      const glow2 = bgGlow2Ref.current;
+      
+      const updateParallax = () => {
+        const rect = section.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const start = -rect.height;
+        const end = viewportHeight;
+        const progress = Math.max(0, Math.min(1, (viewportHeight - rect.top) / (viewportHeight + rect.height)));
+        
+        if (glow1) {
+          glow1.style.setProperty("--parallax-y", `${-progress * 100}%`);
+          glow1.style.setProperty("--parallax-opacity", 0.05 + progress * 0.1);
+        }
+        if (glow2) {
+          glow2.style.setProperty("--parallax-y", `${progress * 100}%`);
+          glow2.style.setProperty("--parallax-opacity", 0.05 + progress * 0.1);
+        }
+      };
+
+      let ticking = false;
+      const onScroll = () => {
+        if (!ticking) {
+          requestAnimationFrame(() => {
+            updateParallax();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+      
+      window.addEventListener("scroll", onScroll, { passive: true });
+      updateParallax();
+      parallaxCleanup = () => window.removeEventListener("scroll", onScroll);
+    }
+
+    return () => {
+      ctx.revert();
+      parallaxCleanup();
+    };
   }, []);
 
   const handleCtaMouseMove = useCallback((e) => {
@@ -217,10 +289,18 @@ export default function ContactSection() {
       <div
         ref={bgGlow1Ref}
         className="absolute top-1/2 left-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-cyan-500/10 rounded-full blur-3xl"
+        style={{
+          transform: "translate(var(--parallax-y, 0%), -50%)",
+          opacity: "var(--parallax-opacity, 0.05)",
+        }}
       />
       <div
         ref={bgGlow2Ref}
         className="absolute bottom-1/4 right-1/4 w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/10 rounded-full blur-3xl"
+        style={{
+          transform: "translate(var(--parallax-y, 0%), 50%)",
+          opacity: "var(--parallax-opacity, 0.05)",
+        }}
       />
 
       <div className="max-w-4xl mx-auto relative z-10">

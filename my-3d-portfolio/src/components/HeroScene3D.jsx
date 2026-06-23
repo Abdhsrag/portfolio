@@ -4,6 +4,19 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Text, Billboard, Line } from "@react-three/drei";
 import * as THREE from "three";
 
+function useMediaQuery(query) {
+  const [matches, setMatches] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) setMatches(media.matches);
+    const listener = (e) => setMatches(e.matches);
+    media.addEventListener("change", listener);
+    return () => media.removeEventListener("change", listener);
+  }, [matches, query]);
+  return matches;
+}
+
 // 1. Quantum Reactor Core: A pulsing double-shelled core with internal lights
 function ReactorCore() {
   const coreRef = useRef();
@@ -128,9 +141,16 @@ function OrbitalRing({ radius, speed, rotationAxis, color }) {
 function SkillNode({ name, skill, startPos, color }) {
   const meshRef = useRef();
   const groupRef = useRef();
+  const materialRef = useRef(null);
   const [hovered, setHovered] = useState(false);
   const scaleRef = useRef(1.0);
   const emissiveRef = useRef(1.4);
+
+  useEffect(() => {
+    if (meshRef.current && meshRef.current.material) {
+      materialRef.current = meshRef.current.material;
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -160,8 +180,8 @@ function SkillNode({ name, skill, startPos, color }) {
     if (groupRef.current) {
       groupRef.current.scale.setScalar(scaleRef.current);
     }
-    if (meshRef.current && meshRef.current.material) {
-      meshRef.current.material.emissiveIntensity = emissiveRef.current;
+    if (materialRef.current) {
+      materialRef.current.emissiveIntensity = emissiveRef.current;
     }
   });
 
@@ -234,7 +254,14 @@ function SkillNode({ name, skill, startPos, color }) {
 // 4. Drifting Matrix-like Code Runes
 function CodeRune({ text, speed, startPos, size }) {
   const textRef = useRef();
-  
+  const materialRef = useRef(null);
+
+  useEffect(() => {
+    if (textRef.current && textRef.current.material) {
+      materialRef.current = textRef.current.material;
+    }
+  }, []);
+
   useFrame((state) => {
     if (!textRef.current) return;
     const t = state.clock.elapsedTime;
@@ -250,8 +277,8 @@ function CodeRune({ text, speed, startPos, size }) {
     // Fade at edges
     const currentY = startPos[1] + textRef.current.position.y;
     const opacityFactor = Math.max(0, 1 - Math.abs(currentY) / 3.2);
-    if (textRef.current.material) {
-      textRef.current.material.opacity = 0.25 * opacityFactor;
+    if (materialRef.current) {
+      materialRef.current.opacity = 0.25 * opacityFactor;
     }
   });
   
@@ -273,13 +300,15 @@ function CodeRune({ text, speed, startPos, size }) {
 // 5. Interactive Particle Swarm with dynamic wind/turbulence from mouse position
 function InteractiveParticleSwarm() {
   const pointsRef = useRef();
-  const particleCount = 450;
+  const particleCount = 150;
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const mobileCount = 50;
+  const actualCount = isMobile ? mobileCount : particleCount;
 
   const [positions, initialData] = useMemo(() => {
-    const pos = new Float32Array(particleCount * 3);
+    const pos = new Float32Array(actualCount * 3);
     const data = [];
-    for (let i = 0; i < particleCount; i++) {
-      // Swirling cylinder-helix distribution
+    for (let i = 0; i < actualCount; i++) {
       const radius = 1.3 + Math.random() * 2.7;
       const angle = Math.random() * Math.PI * 2;
       const height = (Math.random() - 0.5) * 4.0;
@@ -302,7 +331,7 @@ function InteractiveParticleSwarm() {
       });
     }
     return [pos, data];
-  }, []);
+  }, [actualCount]);
 
   // Safe direct initialization of position attribute on mount/update
   useEffect(() => {
@@ -314,6 +343,9 @@ function InteractiveParticleSwarm() {
     }
   }, [positions]);
 
+  const frameCounter = useRef(0);
+  const mousePos = useRef({ x: 0, y: 0 });
+
   useFrame((state) => {
     if (!pointsRef.current || !pointsRef.current.geometry) return;
     const t = state.clock.elapsedTime;
@@ -321,25 +353,30 @@ function InteractiveParticleSwarm() {
     const posAttr = geo.getAttribute("position");
     if (!posAttr) return;
 
-    // Standard slow auto-rotation (removed double-rotation with mouse parallax container)
     pointsRef.current.rotation.y = t * 0.02;
 
-    const mx = state.pointer.x * 2.3;
-    const my = state.pointer.y * 2.3;
+    // Throttle mouse interaction to 30fps (every 2nd frame)
+    frameCounter.current++;
+    if (frameCounter.current % 2 === 0) {
+      mousePos.current.x = state.pointer.x * 2.3;
+      mousePos.current.y = state.pointer.y * 2.3;
+    }
+    const mx = mousePos.current.x;
+    const my = mousePos.current.y;
 
-    for (let i = 0; i < particleCount; i++) {
+    for (let i = 0; i < actualCount; i++) {
       const d = initialData[i];
-      // Orbit path
       const currentAngle = d.angle + t * d.speed;
       let x = Math.cos(currentAngle) * d.radius;
       let z = Math.sin(currentAngle) * d.radius;
       let y = d.y + Math.sin(t + d.phase) * 0.12;
 
-      // Smooth mouse interactivity using R3F state pointer
+      // Mouse interactivity (throttled)
       const dx = x - mx;
       const dy = y - my;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 1.7) {
+      const distSq = dx * dx + dy * dy;
+      if (distSq < 2.89) { // 1.7^2 = 2.89
+        const dist = Math.sqrt(distSq);
         const factor = (1.7 - dist) * 0.12;
         x += (dx / (dist || 0.001)) * factor;
         y += (dy / (dist || 0.001)) * factor;
