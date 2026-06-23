@@ -3,10 +3,13 @@ import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ErrorBoundary from "./ErrorBoundary";
 
 const HeroScene3D = dynamic(() => import("./HeroScene3D"), {
   ssr: false,
-  loading: () => null,
+  loading: () => (
+    <div className="w-full h-full loading-skeleton" />
+  ),
 });
 
 function splitText(text) {
@@ -43,8 +46,7 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    const t = setTimeout(() => setShow3D(true), 300);
-    return () => clearTimeout(t);
+    setShow3D(true);
   }, []);
 
   useEffect(() => {
@@ -88,7 +90,7 @@ export default function HeroSection() {
           rotation: (i) => [-40, 40, -50, 50, -30, 30][i % 6],
           opacity: 0,
           duration: 0.7,
-          stagger: { each: 0.03, from: "random" },
+          stagger: { each: 0.03, from: "start" },
           ease: "back.out(1.7)",
         },
         "-=0.3"
@@ -177,7 +179,9 @@ export default function HeroSection() {
     >
       {show3D && (
         <div className="hero-scene absolute inset-0 z-0">
-          <HeroScene3D isMobile={isMobile} />
+          <ErrorBoundary>
+            <HeroScene3D isMobile={isMobile} />
+          </ErrorBoundary>
         </div>
       )}
 
@@ -273,6 +277,7 @@ export default function HeroSection() {
                 rel="noreferrer"
                 className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center backdrop-blur-sm transition-all shadow-lg ${social.color} social-icon`}
                 title={social.label}
+                aria-label={social.label}
               >
                 <i className={`${social.icon} text-xl sm:text-2xl`} />
               </a>

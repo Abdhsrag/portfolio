@@ -302,13 +302,19 @@ export default function ProjectsSection() {
           ref={gridRef}
           className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
         >
-          {projects.map((project, index) => (
-            <ProjectCard
-              key={project.title.toLowerCase().replace(/\s+/g, "-")}
-              index={index}
-              {...project}
-            />
-          ))}
+          {projects.length === 0 ? (
+            <p className="col-span-full text-center text-gray-400 py-20 text-lg">
+              Projects coming soon...
+            </p>
+          ) : (
+            projects.map((project, index) => (
+              <ProjectCard
+                key={project.title.toLowerCase().replace(/\s+/g, "-")}
+                index={index}
+                {...project}
+              />
+            ))
+          )}
         </div>
 
         <div

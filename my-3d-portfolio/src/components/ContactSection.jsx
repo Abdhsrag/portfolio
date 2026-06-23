@@ -345,6 +345,7 @@ export default function ContactSection() {
                 rel="noreferrer"
                 className={`group relative w-full sm:w-24 h-20 sm:h-24 rounded-xl sm:rounded-2xl glass-card flex flex-col items-center justify-center transition-all ${social.color}`}
                 title={social.label}
+                aria-label={social.label}
               >
                 <div
                   className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 transition-opacity ${social.bgColor}`}
@@ -359,7 +360,7 @@ export default function ContactSection() {
 
           <div ref={emailRef} className="opacity-0">
             <a
-              href="mailto:abdhsrag280@gmail.com"
+              href="mailto:abdhsrag280@gmail.com?subject=Portfolio%20Inquiry"
               className="glass-card p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl mx-4 sm:mx-auto sm:inline-block max-w-full sm:max-w-none block hover:shadow-lg hover:shadow-cyan-500/20 transition-all"
             >
               <p className="text-sm sm:text-base text-gray-400 mb-2 sm:mb-3">
@@ -376,7 +377,7 @@ export default function ContactSection() {
             className="mt-8 sm:mt-12 px-4 opacity-0"
           >
             <a
-              href="mailto:abdhsrag280@gmail.com"
+              href="mailto:abdhsrag280@gmail.com?subject=Portfolio%20Inquiry"
               onMouseMove={handleCtaMouseMove}
               onMouseLeave={handleCtaMouseLeave}
               className="cta-btn relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-bold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-cyan-500/50 transition-shadow overflow-hidden"

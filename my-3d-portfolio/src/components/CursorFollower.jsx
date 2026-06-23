@@ -17,6 +17,10 @@ function CursorFollower() {
   const cursorRef = useRef(null);
   const trailRef = useRef(null);
 
+  if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
+    return null;
+  }
+
   const mouseMove = useCallback(
     throttle((e) => {
       const cursor = cursorRef.current;

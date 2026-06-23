@@ -9,16 +9,16 @@ export default function AboutSection() {
   const headerRef = useRef(null);
   const headerBarRef = useRef(null);
   const bioRef = useRef(null);
-  const statsRef = useRef(null);
   const statsGridRef = useRef(null);
   const skillsTitleRef = useRef(null);
   const skillsGridRef = useRef(null);
+  const countedRef = useRef(false);
 
   const statValues = useMemo(
     () => [
       { label: "Projects", value: 20, suffix: "+" },
       { label: "Experience", value: 2, suffix: "Y+" },
-      { label: "Technologies", value: 17, suffix: "+" },
+      { label: "Technologies", value: 22, suffix: "+" },
       { label: "Coffee", value: null, suffix: "∞" },
     ],
     []
@@ -39,6 +39,11 @@ export default function AboutSection() {
       { icon: "fab fa-python", name: "Python", color: "#3776AB" },
       { icon: "fab fa-python", name: "Django", color: "#092E20" },
       { icon: "fab fa-python", name: "Flask", color: "#000000" },
+      { icon: "fas fa-bolt", name: "Vite", color: "#646CFF" },
+      { icon: "fas fa-cubes", name: "TanStack", color: "#FF4154" },
+      { icon: "fas fa-crown", name: "Zustand", color: "#443E38" },
+      { icon: "fas fa-play", name: "GSAP", color: "#88CE02" },
+      { icon: "fas fa-rocket", name: "FastAPI", color: "#009688" },
       { icon: "fas fa-terminal", name: "Bash", color: "#4EAA25" },
       { icon: "fab fa-git-alt", name: "Git", color: "#F05032" },
       { icon: "fab fa-github", name: "GitHub", color: "#181717" },
@@ -114,13 +119,13 @@ export default function AboutSection() {
         }
       );
       gsap.fromTo(
-        bioRef.current.querySelectorAll("p"),
+        bioRef.current.querySelectorAll(".bio-item"),
         { y: 20, opacity: 0 },
         {
           y: 0,
           opacity: 1,
           duration: 0.5,
-          stagger: 0.15,
+          stagger: 0.12,
           ease: "power2.out",
           scrollTrigger: {
             trigger: bioRef.current,
@@ -143,6 +148,8 @@ export default function AboutSection() {
             stagger: 0.1,
             ease: "back.out(1.7)",
             onComplete: () => {
+              if (countedRef.current) return;
+              countedRef.current = true;
               const statEls = statsGridRef.current?.querySelectorAll(".stat-value");
               if (statEls) {
                 statValues.forEach((stat, i) => {
@@ -227,35 +234,30 @@ export default function AboutSection() {
 
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
           <div ref={bioRef} className="glass-card p-8 space-y-6 opacity-0">
-            <p className="text-lg leading-relaxed text-gray-300 opacity-0">
-              Hey there! I&apos;m{" "}
-              <span className="text-cyan-400 font-bold">
-                Abdelrahman Mohamed
+            <h3 className="bio-item text-3xl md:text-4xl font-black opacity-0">
+              <span className="text-gradient">Abdelrahman Mohamed</span>
+            </h3>
+            <p className="bio-item text-lg text-cyan-400 font-medium opacity-0">
+              Frontend Developer · Egypt 🇪🇬
+            </p>
+            <p className="bio-item text-lg leading-relaxed text-gray-300 opacity-0">
+              I build modern, responsive web applications with a focus on
+              intuitive UI and clean code. When I&apos;m not shipping features, I&apos;m
+              exploring new tools, contributing to open source, or working on my
+              next idea. I believe in continuous learning and keeping up with the
+              ever-moving frontend world.
+            </p>
+            <div className="bio-item opacity-0">
+              <span className="text-xs text-gray-500 font-medium uppercase tracking-widest">
+                Tech Stack
               </span>
-              , a passionate{" "}
-              <span className="text-purple-400 font-bold">
-                Fullstack Developer
-              </span>{" "}
-              from Egypt 🇪🇬
-            </p>
-            <p className="text-lg leading-relaxed text-gray-300 opacity-0">
-              I specialize in building modern, responsive web applications using{" "}
-              <strong className="text-cyan-400">
-                React, Next.js, TypeScript, Python, Django, and Flask
-              </strong>
-              . I love creating intuitive user interfaces and solving complex
-              problems with elegant solutions.
-            </p>
-            <p className="text-lg leading-relaxed text-gray-300 opacity-0">
-              When I&apos;m not coding, you&apos;ll find me exploring new
-              technologies, contributing to open-source projects, or working on
-              my next big idea. I believe in continuous learning and staying
-              up-to-date with the latest industry trends.
-            </p>
-
+              <p className="text-sm text-gray-400 mt-1 leading-relaxed">
+                React · JavaScript · Vite · TanStack · Zustand · GSAP · Python · Django · Flask · FastAPI
+              </p>
+            </div>
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-semibold mt-4 hover:shadow-lg hover:shadow-cyan-500/30 transition-all"
+              className="bio-item inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-semibold mt-4 hover:shadow-lg hover:shadow-cyan-500/30 transition-all opacity-0"
             >
               Let&apos;s Work Together
               <i className="fas fa-arrow-right" />

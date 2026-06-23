@@ -8,19 +8,20 @@ import ProjectsSection from "@/components/ProjectsSection";
 import ContactSection from "@/components/ContactSection";
 import FloatingNav from "@/components/FloatingNav";
 import CursorFollower from "@/components/CursorFollower";
+import BackToTop from "@/components/BackToTop";
 import GSAPProvider from "@/components/GSAPProvider";
 import "./globals.css";
 
 export default function Home() {
   const progressRef = useRef(null);
+  const mainRef = useRef(null);
 
   useEffect(() => {
-    const _warn = console.warn.bind(console);
-    console.warn = (...args) => {
-      if (typeof args[0] === "string" && args[0].includes("THREE.Clock")) return;
-      _warn(...args);
-    };
-    return () => { console.warn = _warn; };
+    gsap.fromTo(
+      mainRef.current,
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
+    );
   }, []);
 
   useEffect(() => {
@@ -39,7 +40,11 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen text-white bg-black">
+    <main
+      ref={mainRef}
+      id="main-content"
+      className="relative min-h-screen text-white bg-black"
+    >
       <div
         ref={progressRef}
         className="fixed top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 z-[10000] origin-left"
@@ -48,6 +53,7 @@ export default function Home() {
 
       <CursorFollower />
       <FloatingNav />
+      <BackToTop />
       <GSAPProvider>
         <HeroSection />
         <AboutSection />
@@ -63,7 +69,7 @@ export default function Home() {
                 Abdelrahman Mohamed
               </p>
               <p className="text-sm text-gray-400">
-                Fullstack Developer | Building the future, one line of code at a
+                Frontend Developer | Building the future, one line of code at a
                 time
               </p>
             </div>
