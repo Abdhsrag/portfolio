@@ -14,6 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
+  metadataBase: new URL("https://abdhsrag.vercel.app"),
   title: "Abdelrahman Mohamed | Frontend Developer",
   description:
     "Frontend Developer from Egypt building modern, responsive web applications with React, Next.js, and Django.",
@@ -42,6 +43,10 @@ export const metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/favicon.svg",
+  },
 };
 
 export const viewport = {
@@ -58,14 +63,14 @@ export default function RootLayout({ children }) {
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
       <head>
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/favicon.svg" type="image/svg+xml" />
+
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{

@@ -83,7 +83,7 @@ function SkillCard({ skill }) {
     <div
       ref={cardRef}
       className="flex flex-col items-center gap-3 glass-card p-6 rounded-xl relative overflow-hidden cursor-pointer"
-      style={{ opacity: 0, transformStyle: "preserve-3d", willChange: "transform, opacity" }}
+      style={{ transformStyle: "preserve-3d", willChange: "transform, opacity" }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >

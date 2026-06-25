@@ -228,25 +228,21 @@ export default function ProjectsSection() {
       if (cards.length) {
         cards.forEach((card, i) => {
           const s = ENTRANCE_STYLES[i % ENTRANCE_STYLES.length];
-          gsap.fromTo(
-            card,
-            { x: s.x, y: s.y, rotation: s.rotation, scale: s.scale, opacity: 0 },
-            {
-              x: 0,
-              y: 0,
-              rotation: 0,
-              scale: 1,
-              opacity: 1,
-              duration: 0.7,
-              delay: i * 0.08,
-              ease: "expo.out",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
+          gsap.set(card, { opacity: 0, x: s.x, y: s.y, rotation: s.rotation, scale: s.scale });
+          gsap.to(card, {
+            opacity: 1,
+            x: 0,
+            y: 0,
+            rotation: 0,
+            scale: 1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom-=100",
+              end: "top top+=100",
+              scrub: true,
+            },
+          });
         });
       }
 
@@ -268,6 +264,7 @@ export default function ProjectsSection() {
       );
     }, sectionRef);
 
+    ScrollTrigger.refresh();
     return () => ctx.revert();
   }, []);
 

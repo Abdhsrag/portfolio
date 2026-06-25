@@ -103,67 +103,57 @@ export default function AboutSection() {
         }
       );
 
-      gsap.fromTo(
+      const bioTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: bioRef.current,
+          start: "top bottom",
+          end: "top top+=100",
+          scrub: true,
+        },
+      });
+      bioTl.fromTo(
         bioRef.current,
         { x: -50, opacity: 0 },
-        {
-          x: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: bioRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      );
-      gsap.fromTo(
+        { x: 0, opacity: 1, duration: 1, ease: "power3.out" }
+      ).fromTo(
         bioRef.current.querySelectorAll(".bio-item"),
         { y: 20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.5,
-          stagger: 0.12,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: bioRef.current,
-            start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
-        }
+        { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, ease: "power2.out" },
+        0.35
       );
 
       const statCards = statsGridRef.current?.children;
       if (statCards) {
-        gsap.fromTo(
+        const statTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: statsGridRef.current,
+            start: "top bottom",
+            end: "top top+=100",
+            scrub: true,
+          },
+        });
+        statTl.fromTo(
           statCards,
           { scale: 0.5, opacity: 0, rotateY: 30 },
           {
             scale: 1,
             opacity: 1,
             rotateY: 0,
-            duration: 0.7,
-            stagger: 0.1,
+            duration: 1,
+            stagger: 0.08,
             ease: "back.out(1.7)",
-            onComplete: () => {
-              if (countedRef.current) return;
-              countedRef.current = true;
-              const statEls = statsGridRef.current?.querySelectorAll(".stat-value");
-              if (statEls) {
-                statValues.forEach((stat, i) => {
-                  if (statEls[i]) animateCounter(statEls[i], stat.value, stat.suffix);
-                });
-              }
-            },
-            scrollTrigger: {
-              trigger: statsGridRef.current,
-              start: "top 80%",
-              toggleActions: "play none none reverse",
-            },
           }
         );
+        statTl.call(() => {
+          if (countedRef.current) return;
+          countedRef.current = true;
+          const statEls = statsGridRef.current?.querySelectorAll(".stat-value");
+          if (statEls) {
+            statValues.forEach((stat, i) => {
+              if (statEls[i]) animateCounter(statEls[i], stat.value, stat.suffix);
+            });
+          }
+        }, [], 0.85);
       }
 
       gsap.fromTo(
@@ -185,30 +175,27 @@ export default function AboutSection() {
 
       const skillCards = Array.from(skillsGridRef.current?.children || []);
       if (skillCards.length) {
-        skillCards.forEach((card, i) => {
-          gsap.fromTo(
-            card,
-            { opacity: 0, scale: 0.4, y: 60, rotationX: -40, rotationY: 10 },
-            {
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              rotationX: 0,
-              rotationY: 0,
-              duration: 0.7,
-              delay: i * 0.08,
-              ease: "back.out(1.5)",
-              scrollTrigger: {
-                trigger: card,
-                start: "top 85%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
+        skillCards.forEach((card) => {
+          gsap.set(card, { opacity: 0, scale: 0.4, y: 60, rotationX: -40, rotationY: 10 });
+          gsap.to(card, {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            rotationX: 0,
+            rotationY: 0,
+            ease: "back.out(1.5)",
+            scrollTrigger: {
+              trigger: card,
+              start: "top bottom-=100",
+              end: "top top+=100",
+              scrub: true,
+            },
+          });
         });
       }
     }, sectionRef);
 
+    ScrollTrigger.refresh();
     return () => ctx.revert();
   }, [animateCounter, statValues]);
 

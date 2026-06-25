@@ -425,7 +425,7 @@ function SceneContent({ skillNodes, runesList, isMobile }) {
   });
 
   return (
-    <group ref={containerRef} scale={isMobile ? 0.75 : 1.35}>
+    <group ref={containerRef} scale={isMobile ? 0.65 : 0.9}>
       {/* Central Quantum Reactor */}
       <ReactorCore />
 
@@ -764,7 +764,7 @@ export default function HeroScene3D({ isMobile }) {
 
   return (
     <Canvas
-      camera={{ position: [0, 0, 5.2], fov: isMobile ? 65 : 45 }}
+      camera={{ position: [0, 0, 6], fov: isMobile ? 60 : 42 }}
       gl={{
         alpha: true,
         antialias: true,

@@ -84,7 +84,7 @@ function ProjectCard({
     <div
       ref={cardRef}
       className="group relative h-full perspective-1000"
-      style={{ opacity: 0, willChange: "transform, opacity" }}
+      style={{ willChange: "transform, opacity" }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

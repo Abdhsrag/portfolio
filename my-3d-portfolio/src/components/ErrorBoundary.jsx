@@ -1,7 +1,7 @@
 "use client";
-import { Component } from "react";
+import { PureComponent } from "react";
 
-export default class ErrorBoundary extends Component {
+export default class ErrorBoundary extends PureComponent {
   constructor(props) {
     super(props);
     this.state = { hasError: false };
