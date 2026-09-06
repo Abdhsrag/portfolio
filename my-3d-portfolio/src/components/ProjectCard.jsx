@@ -12,6 +12,8 @@ function ProjectCard({
   icon = "fas fa-rocket",
   image,
   index = 0,
+  isOpen = false,
+  onToggle,
 }) {
   const cardRef = useRef(null);
   const innerRef = useRef(null);
@@ -95,18 +97,20 @@ function ProjectCard({
     }
   }, [isTouchDevice]);
 
+  useEffect(() => {
+    if (!isTouchDevice || !imageContainerRef.current) return;
+    gsap.to(imageContainerRef.current, {
+      height: isOpen ? 192 : 0,
+      opacity: isOpen ? 1 : 0,
+      duration: 0.45,
+      ease: isOpen ? "power2.out" : "power2.in",
+    });
+  }, [isOpen, isTouchDevice]);
+
   const handleToggleTouch = useCallback(() => {
     if (!isTouchDevice) return;
-    if (!imageContainerRef.current) return;
-    const nextState = !isHovered;
-    setIsHovered(nextState);
-    gsap.to(imageContainerRef.current, {
-      height: nextState ? 192 : 0,
-      opacity: nextState ? 1 : 0,
-      duration: 0.45,
-      ease: nextState ? "power2.out" : "power2.in",
-    });
-  }, [isHovered, isTouchDevice]);
+    onToggle?.();
+  }, [isTouchDevice, onToggle]);
 
   return (
     <div

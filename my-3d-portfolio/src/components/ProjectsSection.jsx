@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ProjectCard from "./ProjectCard";
@@ -19,6 +19,7 @@ export default function ProjectsSection() {
   const headerBarRef = useRef(null);
   const gridRef = useRef(null);
   const footerRef = useRef(null);
+  const [openProjectIndex, setOpenProjectIndex] = useState(null);
 
   const projects = [
     {
@@ -310,6 +311,8 @@ export default function ProjectsSection() {
               <ProjectCard
                 key={project.title.toLowerCase().replace(/\s+/g, "-")}
                 index={index}
+                isOpen={openProjectIndex === index}
+                onToggle={() => setOpenProjectIndex((current) => (current === index ? null : index))}
                 {...project}
               />
             ))
