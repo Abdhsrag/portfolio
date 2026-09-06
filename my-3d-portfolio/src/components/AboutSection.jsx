@@ -203,78 +203,140 @@ export default function AboutSection() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative py-32 px-6 overflow-hidden"
+      className="relative py-16 sm:py-24 lg:py-28 px-4 sm:px-6 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-950/5 to-black" />
-
       <div className="max-w-6xl mx-auto relative z-10">
-        <div ref={headerRef} className="text-center mb-20 opacity-0">
-          <h2 className="text-5xl md:text-7xl font-black mb-6">
-            <span className="text-gradient">About Me</span>
+        <div ref={headerRef} className="text-center mb-10 sm:mb-16 opacity-0">
+          <div className="inline-block px-3.5 py-1 mb-3 sm:mb-4 bg-[#FFE600] text-black font-mono font-black text-[11px] sm:text-xs uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_#000] -rotate-1">
+            01 // PROFILE & STATS
+          </div>
+          <h2 className="text-3xl min-[400px]:text-4xl sm:text-5xl md:text-7xl font-black text-black dark:text-white">
+            About <span className="text-gradient">Me</span>
           </h2>
           <div
             ref={headerBarRef}
-            className="h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full"
+            className="h-1.5 bg-[#FFE600] border border-black mx-auto mt-3 sm:mt-4 max-w-xs"
             style={{ width: 0 }}
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-          <div ref={bioRef} className="glass-card p-8 space-y-6 opacity-0">
-            <h3 className="bio-item text-3xl md:text-4xl font-black opacity-0">
-              <span className="text-gradient">Abdelrahman Mohamed</span>
-            </h3>
-            <p className="bio-item text-lg text-cyan-400 font-medium opacity-0">
-              Frontend Developer · Egypt 🇪🇬
-            </p>
-            <p className="bio-item text-lg leading-relaxed text-gray-300 opacity-0">
-              I build modern, responsive web applications with a focus on
-              intuitive UI and clean code. When I&apos;m not shipping features, I&apos;m
-              exploring new tools, contributing to open source, or working on my
-              next idea. I believe in continuous learning and keeping up with the
-              ever-moving frontend world.
-            </p>
-            <div className="bio-item opacity-0">
-              <span className="text-xs text-gray-500 font-medium uppercase tracking-widest">
-                Tech Stack
-              </span>
-              <p className="text-sm text-gray-400 mt-1 leading-relaxed">
-                React · JavaScript · Vite · TanStack · Zustand · GSAP · Python · Django · Flask · FastAPI
-              </p>
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-stretch mb-16 sm:mb-24">
+          {/* OS Window Style Bio Card */}
+          <div
+            ref={bioRef}
+            className="brutal-card flex flex-col overflow-hidden opacity-0 border-[2.5px] border-black bg-white dark:bg-[#171821] shadow-[4px_4px_0px_#FFE600] sm:shadow-[6px_6px_0px_#FFE600]"
+          >
+            <div className="window-bar">
+              <div className="window-dots">
+                <span className="window-dot bg-[#FF5F56]" />
+                <span className="window-dot bg-[#FFBD2E]" />
+                <span className="window-dot bg-[#27C93F]" />
+              </div>
+              <span className="text-gray-500 dark:text-gray-400 font-mono text-[11px] sm:text-xs">developer_profile.sh</span>
+              <span className="text-[#FFE600] font-mono text-[11px] sm:text-xs font-bold">[ACTIVE]</span>
             </div>
-            <a
-              href="#contact"
-              className="bio-item inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-semibold mt-4 hover:shadow-lg hover:shadow-cyan-500/30 transition-all opacity-0"
-            >
-              Let&apos;s Work Together
-              <i className="fas fa-arrow-right" />
-            </a>
+
+            <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 flex-grow flex flex-col justify-between">
+              <div className="space-y-3 sm:space-y-4">
+                <div className="bio-item opacity-0">
+                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-black dark:text-white">
+                    Abdelrahman Mohamed
+                  </h3>
+                  <div className="inline-block mt-1.5 sm:mt-2 px-2.5 py-0.5 sm:py-1 bg-[#00F0FF] text-black font-mono font-bold text-[10px] sm:text-xs uppercase border border-black shadow-[2px_2px_0px_#000]">
+                    Frontend Developer · Egypt 🇪🇬
+                  </div>
+                </div>
+
+                <p className="bio-item text-xs sm:text-base lg:text-lg leading-relaxed text-gray-700 dark:text-gray-200 opacity-0 font-normal">
+                  I build modern, responsive web applications with a focus on
+                  intuitive UI and clean code. When I&apos;m not shipping features, I&apos;m
+                  exploring new tools, contributing to open source, or working on my
+                  next idea. I believe in continuous learning and keeping up with the
+                  ever-moving frontend world.
+                </p>
+
+                <div className="bio-item opacity-0 pt-1 sm:pt-2">
+                  <span className="text-[11px] sm:text-xs text-[#000000] dark:text-[#FFE600] font-mono font-bold uppercase tracking-wider block mb-1.5 sm:mb-2">
+                    // Core Stack
+                  </span>
+                  <div className="flex flex-wrap gap-1 sm:gap-1.5">
+                    {["React", "Next.js", "JavaScript", "TypeScript", "GSAP", "Three.js", "Tailwind", "Python", "FastAPI"].map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 bg-[#F4EFE6] dark:bg-[#20222e] text-black dark:text-gray-200 border border-black shadow-[1.5px_1.5px_0px_#000]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bio-item opacity-0 pt-3 sm:pt-4 flex flex-col min-[480px]:flex-row gap-2.5 sm:gap-3">
+                <a
+                  href="/assets/Abdelrahman_Mohamed_CV.pdf"
+                  download="Abdelrahman_Mohamed_CV.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="brutal-btn brutal-btn-cyan flex-1 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm inline-flex items-center justify-center gap-2"
+                >
+                  <i className="fas fa-file-arrow-down text-xs sm:text-sm" />
+                  <span>Download CV</span>
+                </a>
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }}
+                  className="brutal-btn brutal-btn-yellow flex-1 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm inline-flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Let&apos;s Work Together</span>
+                  <i className="fas fa-arrow-right text-xs sm:text-sm" />
+                </a>
+              </div>
+            </div>
           </div>
 
-          <div ref={statsGridRef} className="grid grid-cols-2 gap-6">
-            {statValues.map((stat) => (
-              <div
-                key={stat.label}
-                className="glass-card p-6 text-center group cursor-default hover:scale-105 transition-transform"
-              >
-                <div className="stat-value text-5xl font-black text-gradient mb-2" />
-                <div className="text-sm text-gray-400">{stat.label}</div>
-              </div>
-            ))}
+          {/* Color-Blocked Neobrutalist Stats Grid */}
+          <div ref={statsGridRef} className="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+            {statValues.map((stat, i) => {
+              const theme = [
+                { border: "border-black", shadow: "shadow-[4px_4px_0px_#FFE600] sm:shadow-[5px_5px_0px_#FFE600]", labelBg: "bg-[#FFE600] text-black", textCol: "text-black dark:text-[#FFE600]" },
+                { border: "border-black", shadow: "shadow-[4px_4px_0px_#00F0FF] sm:shadow-[5px_5px_0px_#00F0FF]", labelBg: "bg-[#00F0FF] text-black", textCol: "text-black dark:text-[#00F0FF]" },
+                { border: "border-black", shadow: "shadow-[4px_4px_0px_#FF4088] sm:shadow-[5px_5px_0px_#FF4088]", labelBg: "bg-[#FF4088] text-white", textCol: "text-[#FF4088] dark:text-[#FF4088]" },
+                { border: "border-black", shadow: "shadow-[4px_4px_0px_#22C55E] sm:shadow-[5px_5px_0px_#22C55E]", labelBg: "bg-[#22C55E] text-black", textCol: "text-[#16a34a] dark:text-[#22C55E]" },
+              ][i % 4];
+
+              return (
+                <div
+                  key={stat.label}
+                  className={`brutal-card p-3.5 sm:p-5 lg:p-6 text-center group cursor-default flex flex-col justify-center items-center bg-white dark:bg-[#171821] border-[2.5px] ${theme.border} ${theme.shadow} hover:translate-x-[-2px] hover:translate-y-[-2px] transition-transform`}
+                >
+                  <div className={`stat-value text-3xl min-[400px]:text-4xl sm:text-5xl lg:text-6xl font-black ${theme.textCol} mb-2 sm:mb-3 font-mono`} />
+                  <div className={`text-[10px] min-[400px]:text-xs sm:text-sm font-mono font-bold uppercase tracking-wider px-2 py-0.5 sm:px-2.5 sm:py-1 rounded border border-black shadow-[1.5px_1.5px_0px_#000] sm:shadow-[2px_2px_0px_#000] ${theme.labelBg}`}>
+                    {stat.label}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
         <div className="text-center">
+          <div className="inline-block px-3.5 py-1 mb-2.5 sm:mb-3 bg-[#00F0FF] text-black font-mono font-black text-[11px] sm:text-xs uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_#000] rotate-1">
+            02 // TOOLKIT & TECHNOLOGIES
+          </div>
           <h3
             ref={skillsTitleRef}
-            className="text-4xl md:text-5xl font-black mb-12 opacity-0"
+            className="text-2xl min-[400px]:text-3xl sm:text-4xl md:text-5xl font-black mb-8 sm:mb-12 opacity-0 text-black dark:text-white"
           >
-            <span className="text-gradient">My Tech Stack</span>
+            My <span className="text-gradient">Tech Stack</span>
           </h3>
 
           <div
             ref={skillsGridRef}
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6"
+            className="grid grid-cols-2 min-[440px]:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-4 md:gap-5"
             style={{ perspective: "1200px" }}
           >
             {skills.map((skill) => (

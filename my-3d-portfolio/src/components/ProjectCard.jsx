@@ -19,9 +19,21 @@ function ProjectCard({
   const imageContainerRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const mounted = useRef(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isTouch = window.matchMedia("(hover: none)").matches || window.innerWidth < 1024;
+      setIsTouchDevice(isTouch);
+      if (isTouch && imageContainerRef.current) {
+        gsap.set(imageContainerRef.current, { height: 180, opacity: 1 });
+      }
+    }
+  }, []);
+
   const handleMouseMove = useCallback((e) => {
+    if (isTouchDevice) return;
     const card = innerRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();
@@ -47,17 +59,19 @@ function ProjectCard({
         "--glow-y": `${glowY}%`,
       });
     }
-  }, []);
+  }, [isTouchDevice]);
 
   const handleMouseEnter = useCallback(() => {
     setIsHovered(true);
-    gsap.to(glowRef.current, { opacity: 1, duration: 0.3 });
-    gsap.to(imageContainerRef.current, {
-      height: 192,
-      opacity: 1,
-      duration: 0.5,
-      ease: "power2.out",
-    });
+    if (glowRef.current) gsap.to(glowRef.current, { opacity: 1, duration: 0.3 });
+    if (imageContainerRef.current) {
+      gsap.to(imageContainerRef.current, {
+        height: 192,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
   }, []);
 
   const handleMouseLeave = useCallback(() => {
@@ -71,14 +85,28 @@ function ProjectCard({
         ease: "power3.out",
       });
     }
-    gsap.to(glowRef.current, { opacity: 0, duration: 0.3 });
-    gsap.to(imageContainerRef.current, {
-      height: 0,
-      opacity: 0,
-      duration: 0.4,
-      ease: "power2.in",
-    });
+    if (glowRef.current) gsap.to(glowRef.current, { opacity: 0, duration: 0.3 });
+    if (imageContainerRef.current) {
+      gsap.to(imageContainerRef.current, {
+        height: 0,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.in",
+      });
+    }
   }, []);
+
+  const handleToggleTouch = useCallback(() => {
+    if (!imageContainerRef.current) return;
+    const nextState = !isHovered;
+    setIsHovered(nextState);
+    gsap.to(imageContainerRef.current, {
+      height: nextState ? 192 : 0,
+      opacity: nextState ? 1 : 0,
+      duration: 0.45,
+      ease: nextState ? "power2.out" : "power2.in",
+    });
+  }, [isHovered]);
 
   return (
     <div
@@ -88,16 +116,7 @@ function ProjectCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onTouchStart={() => {
-        setIsHovered(true);
-        gsap.to(imageContainerRef.current, { height: 192, opacity: 1, duration: 0.5, ease: "power2.out" });
-      }}
-      onTouchEnd={() => {
-        setTimeout(() => {
-          setIsHovered(false);
-          gsap.to(imageContainerRef.current, { height: 0, opacity: 0, duration: 0.4, ease: "power2.in" });
-        }, 2000);
-      }}
+      onClick={handleToggleTouch}
     >
       <div
         ref={glowRef}
@@ -110,27 +129,35 @@ function ProjectCard({
 
       <div
         ref={innerRef}
-        className="relative glass-card h-full flex flex-col backdrop-blur-xl rounded-2xl border-2 border-transparent hover:border-cyan-400/30 transition-colors overflow-hidden"
+        className="relative brutal-card h-full flex flex-col rounded-xl border-[2.5px] border-black bg-white dark:bg-[#171821] shadow-[4px_4px_0px_#000] hover:shadow-[6px_6px_0px_#FFE600] overflow-hidden transition-all duration-200 cursor-pointer"
         style={{ transformStyle: "preserve-3d" }}
       >
+        {/* Retro Window Titlebar */}
+        <div className="window-bar">
+          <div className="window-dots">
+            <span className="window-dot bg-[#FF5F56]" />
+            <span className="window-dot bg-[#FFBD2E]" />
+            <span className="window-dot bg-[#27C93F]" />
+          </div>
+          <span className="font-mono text-[11px] text-gray-700 dark:text-gray-300 font-bold tracking-wider">PROJECT_{String(index + 1).padStart(2, "0")}</span>
+          <span className="font-mono text-[10px] bg-[#FFE600] text-black font-bold px-1.5 py-0.5 rounded border border-black">LIVE</span>
+        </div>
+
         <div
           ref={imageContainerRef}
-          className="relative w-full overflow-hidden"
+          className="relative w-full overflow-hidden border-b-2 border-black"
           style={{ height: 0, opacity: 0 }}
         >
-          <div className="w-full h-48 bg-gradient-to-br from-gray-900 to-gray-800">
+          <div className="relative w-full h-48 bg-gray-100 dark:bg-[#0d0e12]">
             {image && !imageError ? (
-              <>
-                <Image
-                  src={image}
-                  alt={title}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover"
-                  onError={() => setImageError(true)}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
-              </>
+              <Image
+                src={image}
+                alt={title}
+                fill
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover"
+                onError={() => setImageError(true)}
+              />
             ) : (
               <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center relative`}>
                 <div
@@ -145,44 +172,53 @@ function ProjectCard({
               </div>
             )}
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
         </div>
 
-        <div className="p-6 sm:p-8 flex flex-col flex-grow">
-          <div
-            className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 sm:mb-6 shadow-lg`}
-          >
-            <i className={`${icon} text-white text-xl sm:text-2xl`} />
+        <div className="p-5 sm:p-6 flex flex-col flex-grow justify-between">
+          <div>
+            <div
+              className={`w-12 h-12 sm:w-13 sm:h-13 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4 border-2 border-black shadow-[2px_2px_0px_#000]`}
+            >
+              <i className={`${icon} text-white text-lg sm:text-xl`} />
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-black mb-2 text-black dark:text-white group-hover:text-[#FFE600] transition-colors">
+              {title}
+            </h3>
+
+            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed line-clamp-3 font-medium">
+              {desc}
+            </p>
+
+            <div className="flex flex-wrap gap-1.5 mb-5">
+              {tech.map((t) => (
+                <span
+                  key={t}
+                  className="text-[10px] sm:text-xs font-mono font-bold px-2 py-0.5 bg-[#F4EFE6] dark:bg-[#20222e] text-black dark:text-gray-200 border border-black shadow-[1.5px_1.5px_0px_#000] hover:bg-[#00F0FF] hover:text-black transition-colors"
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
           </div>
 
-          <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-white group-hover:text-gradient transition-all">
-            {title}
-          </h3>
-
-          <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6 flex-grow leading-relaxed line-clamp-3">
-            {desc}
-          </p>
-
-          <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
-            {tech.map((t) => (
-              <span
-                key={t}
-                className="text-[10px] sm:text-xs px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/5 border border-white/10 rounded-full text-gray-300 hover:bg-white/10 hover:border-cyan-400/30 transition-all"
+          <div className="pt-2">
+            {link ? (
+              <a
+                href={link}
+                target="_blank"
+                rel="noreferrer"
+                className="brutal-btn brutal-btn-cyan w-full py-2.5 rounded-lg text-xs sm:text-sm inline-flex items-center justify-center gap-2 shadow-[2.5px_2.5px_0px_#000] min-h-[44px]"
               >
-                {t}
+                <span>View Project</span>
+                <i className="fas fa-arrow-right" />
+              </a>
+            ) : (
+              <span className="w-full py-2.5 rounded-lg text-xs font-mono text-center text-gray-700 dark:text-gray-400 bg-gray-200 dark:bg-[#20222e] border border-black shadow-[1.5px_1.5px_0px_#000] min-h-[44px] inline-flex items-center justify-center">
+                Private / Internal Project
               </span>
-            ))}
+            )}
           </div>
-
-          <a
-            href={link}
-            target="_blank"
-            rel="noreferrer"
-            className="group/link inline-flex items-center gap-2 text-cyan-400 font-semibold mt-auto hover:gap-4 transition-all text-sm sm:text-base"
-          >
-            <span>View Project</span>
-            <i className="fas fa-arrow-right group-hover/link:translate-x-1 transition-transform" />
-          </a>
         </div>
       </div>
     </div>

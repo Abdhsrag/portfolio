@@ -282,9 +282,9 @@ export default function ContactSection() {
     <section
       id="contact"
       ref={sectionRef}
-      className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden"
+      className="relative py-16 sm:py-24 lg:py-32 px-3.5 sm:px-6 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-cyan-950/5 to-black" />
+      <div className="absolute inset-0 dark:bg-gradient-to-b dark:from-black/40 dark:via-cyan-950/5 dark:to-black/40 pointer-events-none" />
 
       <div
         ref={bgGlow1Ref}
@@ -310,19 +310,22 @@ export default function ContactSection() {
             className="opacity-0"
             style={{ perspective: "1000px" }}
           >
-            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-4">
-              <span className="text-gradient">Let&apos;s Connect</span>
+            <div className="inline-block px-3.5 py-1 mb-3 sm:mb-4 bg-[#FFE600] text-black font-mono font-black text-[11px] sm:text-xs uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_#000] -rotate-1">
+              04 // GET IN TOUCH
+            </div>
+            <h2 className="text-3xl min-[400px]:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-3 sm:mb-6 px-2 sm:px-4 text-black dark:text-white">
+              Let&apos;s <span className="text-gradient">Connect</span>
             </h2>
             <div
               ref={headerBarRef}
-              className="h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full mb-8 sm:mb-12"
+              className="h-1.5 bg-[#FFE600] border border-black mx-auto mb-6 sm:mb-12 max-w-xs"
               style={{ width: 0 }}
             />
           </div>
 
           <p
             ref={subtitleRef}
-            className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-300 mb-8 sm:mb-12 leading-relaxed px-4"
+            className="text-base sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-800 dark:text-gray-200 mb-6 sm:mb-12 leading-relaxed px-2 sm:px-4"
           >
             {"Have a project in mind? Let's build something amazing together!"
               .split(" ")
@@ -335,7 +338,7 @@ export default function ContactSection() {
 
           <div
             ref={socialsRef}
-            className="grid grid-cols-3 sm:flex sm:flex-wrap justify-center gap-4 sm:gap-6 mb-8 sm:mb-12 px-4"
+            className="grid grid-cols-3 sm:flex sm:flex-wrap justify-center gap-2.5 sm:gap-4 md:gap-6 mb-6 sm:mb-12 px-2 sm:px-4"
           >
             {socialLinks.map((social) => (
               <a
@@ -343,51 +346,51 @@ export default function ContactSection() {
                 href={social.href}
                 target="_blank"
                 rel="noreferrer"
-                className={`group relative w-full sm:w-24 h-20 sm:h-24 rounded-xl sm:rounded-2xl glass-card flex flex-col items-center justify-center transition-all ${social.color}`}
+                className="group relative w-full sm:w-28 h-18 sm:h-24 rounded-xl border-[2.5px] border-black bg-white dark:bg-[#171821] shadow-[3px_3px_0px_#000] sm:shadow-[4px_4px_0px_#000] hover:shadow-[5px_5px_0px_#00F0FF] flex flex-col items-center justify-center transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[1px_1px_0px_#000] p-2"
                 title={social.label}
                 aria-label={social.label}
               >
-                <div
-                  className={`absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 transition-opacity ${social.bgColor}`}
-                />
-                <i className={`${social.icon} text-2xl sm:text-3xl md:text-4xl mb-1 sm:mb-2 relative z-10`} />
-                <span className="text-[10px] sm:text-xs text-gray-400 group-hover:text-current relative z-10 transition-colors">
+                <i className={`${social.icon} text-xl sm:text-2xl md:text-3xl mb-1 sm:mb-1.5 relative z-10 text-black dark:text-white group-hover:text-[#00F0FF] transition-colors`} />
+                <span className="text-[10px] sm:text-[11px] font-mono font-bold text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white relative z-10 transition-colors">
                   {social.label}
                 </span>
               </a>
             ))}
           </div>
 
-          <div ref={emailRef} className="opacity-0">
-            <a
-              href="mailto:abdhsrag280@gmail.com?subject=Portfolio%20Inquiry"
-              className="glass-card p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl mx-4 sm:mx-auto sm:inline-block max-w-full sm:max-w-none block hover:shadow-lg hover:shadow-cyan-500/20 transition-all"
-            >
-              <p className="text-sm sm:text-base text-gray-400 mb-2 sm:mb-3">
-                Or email me directly at:
+          <div ref={emailRef} className="opacity-0 px-2 sm:px-4">
+            <div className="brutal-card p-4 sm:p-6 lg:p-8 max-w-xl mx-auto rounded-xl border-[2.5px] border-black bg-white dark:bg-[#171821] shadow-[4px_4px_0px_#FFE600] sm:shadow-[6px_6px_0px_#FFE600] overflow-hidden">
+              <div className="flex items-center justify-between pb-2.5 sm:pb-3 mb-3 sm:mb-4 border-b-2 border-black font-mono text-[11px] sm:text-xs text-gray-500 dark:text-gray-400">
+                <span className="text-black dark:text-[#FFE600] font-bold">// DIRECT_INBOX</span>
+                <span className="bg-black text-[#00F0FF] px-1.5 sm:px-2 py-0.5 rounded border border-black text-[10px] sm:text-xs">STATUS: ONLINE</span>
+              </div>
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-1.5 sm:mb-2 font-mono">
+                Drop me a line anytime:
               </p>
-              <span className="text-base sm:text-xl md:text-2xl font-bold text-gradient hover:opacity-80 transition-opacity break-all sm:break-normal">
+              <a
+                href="mailto:abdhsrag280@gmail.com?subject=Portfolio%20Inquiry"
+                className="text-sm min-[400px]:text-base sm:text-xl md:text-2xl font-black text-black dark:text-white hover:text-[#FF4088] dark:hover:text-[#FFE600] transition-colors font-mono break-all inline-block"
+              >
                 abdhsrag280@gmail.com
-              </span>
-            </a>
+              </a>
+            </div>
           </div>
 
           <div
             ref={ctaRef}
-            className="mt-8 sm:mt-12 px-4 opacity-0"
+            className="mt-6 sm:mt-12 px-2 sm:px-4 opacity-0"
           >
             <a
               href="mailto:abdhsrag280@gmail.com?subject=Portfolio%20Inquiry"
               onMouseMove={handleCtaMouseMove}
               onMouseLeave={handleCtaMouseLeave}
-              className="cta-btn relative inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 md:px-10 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-bold text-sm sm:text-base md:text-lg shadow-lg hover:shadow-cyan-500/50 transition-shadow overflow-hidden"
+              className="brutal-btn brutal-btn-yellow w-full min-[480px]:w-auto px-6 sm:px-10 py-3.5 sm:py-5 rounded-xl text-sm sm:text-base md:text-lg gap-2 sm:gap-3"
             >
-              <div className="btn-glow absolute inset-0 bg-white/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <i className="fas fa-envelope text-base sm:text-lg md:text-xl relative z-10" />
-              <span className="whitespace-nowrap relative z-10">
+              <i className="fas fa-envelope text-base sm:text-lg" />
+              <span className="whitespace-nowrap">
                 Send Me a Message
               </span>
-              <i className="fas fa-arrow-right text-sm sm:text-base relative z-10" />
+              <i className="fas fa-arrow-right text-xs sm:text-sm" />
             </a>
           </div>
         </div>

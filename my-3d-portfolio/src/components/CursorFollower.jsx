@@ -1,5 +1,5 @@
 "use client";
-import { memo, useEffect, useRef, useCallback } from "react";
+import { memo, useEffect, useRef, useCallback, useState } from "react";
 import gsap from "gsap";
 
 function throttle(fn, limit) {
@@ -14,12 +14,15 @@ function throttle(fn, limit) {
 }
 
 function CursorFollower() {
+  const [mounted, setMounted] = useState(false);
   const cursorRef = useRef(null);
   const trailRef = useRef(null);
 
-  if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
-    return null;
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(pointer: fine)").matches) {
+      setMounted(true);
+    }
+  }, []);
 
   const mouseMove = useCallback(
     throttle((e) => {
@@ -53,18 +56,20 @@ function CursorFollower() {
 
     window.addEventListener("mousemove", mouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", mouseMove);
-  }, [mouseMove]);
+  }, [mouseMove, mounted]);
+
+  if (!mounted) return null;
 
   return (
     <>
       <div
         ref={cursorRef}
-        className="pointer-events-none fixed z-[99999] w-4 h-4 bg-cyan-400 rounded-full mix-blend-difference"
+        className="pointer-events-none fixed z-[99999] w-3.5 h-3.5 bg-[#FFE600] border-1.5 border-black rounded-full"
         style={{ transform: "translate(-50%, -50%)" }}
       />
       <div
         ref={trailRef}
-        className="pointer-events-none fixed z-[99998] w-8 h-8 border border-cyan-400/50 rounded-full"
+        className="pointer-events-none fixed z-[99998] w-7 h-7 border-2 border-[#00F0FF] rounded-full"
         style={{ transform: "translate(-50%, -50%)" }}
       />
     </>

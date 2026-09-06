@@ -60,7 +60,8 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`light ${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
     >
       <head>
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />

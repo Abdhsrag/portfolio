@@ -4,6 +4,17 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Text, Billboard, Line } from "@react-three/drei";
 import * as THREE from "three";
 
+// Suppress upstream R3F internal deprecation notice for THREE.Clock until R3F v9 migrates to THREE.Timer
+if (typeof window !== "undefined") {
+  const _warn = console.warn;
+  console.warn = (...args) => {
+    if (typeof args[0] === "string" && (args[0].includes("THREE.Clock") || args[0].includes("Clock: This module has been deprecated"))) {
+      return;
+    }
+    _warn.apply(console, args);
+  };
+}
+
 function useMediaQuery(query) {
   const [matches, setMatches] = useState(false);
   useEffect(() => {
@@ -15,6 +26,23 @@ function useMediaQuery(query) {
     return () => media.removeEventListener("change", listener);
   }, [matches, query]);
   return matches;
+}
+
+function useIsDark() {
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
+  return isDark;
 }
 
 // 1. Quantum Reactor Core: A pulsing double-shelled core with internal lights
@@ -138,7 +166,7 @@ function OrbitalRing({ radius, speed, rotationAxis, color }) {
 }
 
 // 3. Floating Skill Nodes connected to the core by lasers
-function SkillNode({ name, skill, startPos, color }) {
+function SkillNode({ name, skill, startPos, color, isDark = true }) {
   const meshRef = useRef();
   const groupRef = useRef();
   const materialRef = useRef(null);
@@ -220,7 +248,7 @@ function SkillNode({ name, skill, startPos, color }) {
           <Text
             position={[0, 0.38, 0]}
             fontSize={0.15}
-            color={hovered ? color : "#ffffff"}
+            color={hovered ? color : (isDark ? "#ffffff" : "#000000")}
             anchorX="center"
             anchorY="middle"
             fontWeight="bold"
@@ -230,7 +258,7 @@ function SkillNode({ name, skill, startPos, color }) {
           <Text
             position={[0, 0.22, 0]}
             fontSize={0.09}
-            color={hovered ? "#ffffff" : "#9ca3af"}
+            color={hovered ? (isDark ? "#ffffff" : "#000000") : (isDark ? "#9ca3af" : "#374151")}
             anchorX="center"
             anchorY="middle"
           >
@@ -252,7 +280,7 @@ function SkillNode({ name, skill, startPos, color }) {
 }
 
 // 4. Drifting Matrix-like Code Runes
-function CodeRune({ text, speed, startPos, size }) {
+function CodeRune({ text, speed, startPos, size, isDark = true }) {
   const textRef = useRef();
   const materialRef = useRef(null);
 
@@ -278,7 +306,7 @@ function CodeRune({ text, speed, startPos, size }) {
     const currentY = startPos[1] + textRef.current.position.y;
     const opacityFactor = Math.max(0, 1 - Math.abs(currentY) / 3.2);
     if (materialRef.current) {
-      materialRef.current.opacity = 0.25 * opacityFactor;
+      materialRef.current.opacity = (isDark ? 0.25 : 0.45) * opacityFactor;
     }
   });
   
@@ -287,9 +315,9 @@ function CodeRune({ text, speed, startPos, size }) {
       <Text
         ref={textRef}
         fontSize={size}
-        color="#00d9ff"
+        color={isDark ? "#00d9ff" : "#0284c7"}
         transparent
-        opacity={0.2}
+        opacity={isDark ? 0.2 : 0.45}
       >
         {text}
       </Text>
@@ -298,7 +326,7 @@ function CodeRune({ text, speed, startPos, size }) {
 }
 
 // 5. Interactive Particle Swarm with dynamic wind/turbulence from mouse position
-function InteractiveParticleSwarm() {
+function InteractiveParticleSwarm({ isDark = true }) {
   const pointsRef = useRef();
   const particleCount = 150;
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -391,13 +419,13 @@ function InteractiveParticleSwarm() {
     <points ref={pointsRef}>
       <bufferGeometry />
       <pointsMaterial
-        color="#00d9ff"
-        size={0.035}
+        color={isDark ? "#00d9ff" : "#0284c7"}
+        size={isDark ? 0.035 : 0.045}
         transparent
-        opacity={0.55}
+        opacity={isDark ? 0.55 : 0.75}
         sizeAttenuation
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
+        blending={isDark ? THREE.AdditiveBlending : THREE.NormalBlending}
       />
     </points>
   );
@@ -406,6 +434,7 @@ function InteractiveParticleSwarm() {
 // 6. Scene Content Wrapper to allow useFrame hook usage inside Canvas
 function SceneContent({ skillNodes, runesList, isMobile }) {
   const containerRef = useRef();
+  const isDark = useIsDark();
 
   useFrame((state) => {
     // Smooth, slow parallax using internal R3F state pointer (avoids React state update lag)
@@ -425,7 +454,7 @@ function SceneContent({ skillNodes, runesList, isMobile }) {
   });
 
   return (
-    <group ref={containerRef} scale={isMobile ? 0.65 : 0.9}>
+    <group ref={containerRef} scale={isMobile ? 0.84 : 0.9}>
       {/* Central Quantum Reactor */}
       <ReactorCore />
 
@@ -436,16 +465,16 @@ function SceneContent({ skillNodes, runesList, isMobile }) {
 
       {/* Floating Skill Constellation Nodes */}
       {skillNodes.map((node, i) => (
-        <SkillNode key={i} {...node} />
+        <SkillNode key={i} {...node} isDark={isDark} />
       ))}
 
       {/* Drifting Code Runes */}
       {runesList.map((rune, i) => (
-        <CodeRune key={i} {...rune} />
+        <CodeRune key={i} {...rune} isDark={isDark} />
       ))}
 
       {/* Swirling Interactive Particles */}
-      <InteractiveParticleSwarm />
+      <InteractiveParticleSwarm isDark={isDark} />
     </group>
   );
 }
@@ -454,6 +483,7 @@ function SceneContent({ skillNodes, runesList, isMobile }) {
 function HeroScene2D({ isMobile, skillNodes, runesList }) {
   const canvasRef = useRef(null);
   const mouseRef = useRef({ x: 0, y: 0 });
+  const isDark = useIsDark();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -675,13 +705,13 @@ function HeroScene2D({ isMobile, skillNodes, runesList }) {
         ctx.shadowBlur = 0;
 
         // Node Title text
-        ctx.fillStyle = isHovered ? node.color : "#ffffff";
+        ctx.fillStyle = isHovered ? node.color : (isDark ? "#ffffff" : "#000000");
         ctx.font = `bold ${Math.round(13 * ns)}px Inter, system-ui, sans-serif`;
         ctx.textAlign = "center";
         ctx.fillText(node.name, sx, sy - 22 * ns);
 
         // Node Skill detail
-        ctx.fillStyle = isHovered ? "#ffffff" : "#9ca3af";
+        ctx.fillStyle = isHovered ? (isDark ? "#ffffff" : "#000000") : (isDark ? "#9ca3af" : "#4b5563");
         ctx.font = `${Math.round(9 * ns)}px Inter, system-ui, sans-serif`;
         ctx.fillText(node.skill, sx, sy - 11 * ns);
       });
@@ -764,7 +794,7 @@ export default function HeroScene3D({ isMobile }) {
 
   return (
     <Canvas
-      camera={{ position: [0, 0, 6], fov: isMobile ? 60 : 42 }}
+      camera={{ position: [0, 0, 6], fov: isMobile ? 45 : 42 }}
       gl={{
         alpha: true,
         antialias: true,
@@ -774,7 +804,7 @@ export default function HeroScene3D({ isMobile }) {
         toneMappingExposure: 1.4,
       }}
       dpr={[1, 1.5]}
-      style={{ background: "transparent", width: "100%", height: "100%" }}
+      style={{ background: "transparent", width: "100%", height: "100%", touchAction: "pan-y" }}
     >
       <ambientLight intensity={0.4} />
       <directionalLight position={[5, 5, 5]} intensity={0.8} />

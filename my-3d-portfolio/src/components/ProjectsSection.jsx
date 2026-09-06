@@ -272,32 +272,34 @@ export default function ProjectsSection() {
     <section
       id="projects"
       ref={sectionRef}
-      className="relative py-20 sm:py-32 px-4 sm:px-6 overflow-hidden"
+      className="relative py-16 sm:py-24 lg:py-32 px-3.5 sm:px-6 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black via-purple-950/5 to-black" />
+      <div className="absolute inset-0 dark:bg-gradient-to-b dark:from-black/40 dark:via-purple-950/5 dark:to-black/40 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div
           ref={headerRef}
-          className="text-center mb-12 sm:mb-20 opacity-0"
+          className="text-center mb-10 sm:mb-16 opacity-0"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-4 sm:mb-6 px-4">
-            <span className="text-gradient">Featured Projects</span>
+          <div className="inline-block px-3.5 py-1 mb-3 sm:mb-4 bg-[#FF4088] text-white font-mono font-black text-[11px] sm:text-xs uppercase tracking-widest border-2 border-black shadow-[3px_3px_0px_#000] -rotate-1">
+            03 // FEATURED WORK
+          </div>
+          <h2 className="text-3xl min-[400px]:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-black dark:text-white px-2 sm:px-4">
+            Selected <span className="text-gradient">Projects</span>
           </h2>
           <div
             ref={headerBarRef}
-            className="h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto rounded-full mb-4 sm:mb-6"
+            className="h-1.5 bg-[#FF4088] border border-black mx-auto mt-3 sm:mt-4 max-w-xs"
             style={{ width: 0 }}
           />
-          <p className="text-base sm:text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto px-4">
-            Here are some of my recent projects that showcase my skills and
-            creativity
+          <p className="text-xs sm:text-base text-gray-600 dark:text-gray-300 max-w-xl mx-auto px-4 mt-3 sm:mt-4 font-mono">
+            // A curated showcase of production apps, fullstack platforms, and experiments
           </p>
         </div>
 
         <div
           ref={gridRef}
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-8"
         >
           {projects.length === 0 ? (
             <p className="col-span-full text-center text-gray-400 py-20 text-lg">
@@ -316,17 +318,17 @@ export default function ProjectsSection() {
 
         <div
           ref={footerRef}
-          className="text-center mt-12 sm:mt-16 px-4 opacity-0"
+          className="text-center mt-10 sm:mt-16 px-4 opacity-0"
         >
           <a
             href="https://github.com/Abdhsrag"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 sm:gap-3 px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full font-semibold text-sm sm:text-base lg:text-lg group hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+            className="brutal-btn brutal-btn-yellow w-full min-[480px]:w-auto px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-xs sm:text-sm md:text-base gap-2 sm:gap-3"
           >
-            <i className="fab fa-github text-xl sm:text-2xl" />
-            <span>View More on GitHub</span>
-            <i className="fas fa-arrow-right group-hover:translate-x-2 transition-transform" />
+            <i className="fab fa-github text-lg sm:text-xl" />
+            <span>Explore All Repos on GitHub</span>
+            <i className="fas fa-arrow-right text-xs sm:text-sm" />
           </a>
         </div>
       </div>

@@ -12,26 +12,71 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    scroll-padding-top: 5rem;
-    scroll-padding-bottom: 6rem;
+  }
+
+  /* Default Light Mode & Dark Mode Root Variables */
+  :root {
+    --bg-color: #FFFDF0;
+    --text-color: #000000;
+    --surface-color: #FFFFFF;
+    --surface-light: #F4EFE6;
+    --dot-color: rgba(0, 0, 0, 0.12);
+    --muted-color: #2c2d35;
+  }
+
+  html.light {
+    --bg-color: #FFFDF0;
+    --text-color: #000000;
+    --surface-color: #FFFFFF;
+    --surface-light: #F4EFE6;
+    --dot-color: rgba(0, 0, 0, 0.12);
+    --muted-color: #2c2d35;
+  }
+
+  html.dark {
+    --bg-color: #0d0e12;
+    --text-color: #ffffff;
+    --surface-color: #171821;
+    --surface-light: #20222e;
+    --dot-color: rgba(255, 255, 255, 0.12);
+    --muted-color: #d1d5db;
   }
 
   body {
-    @apply bg-black text-white overflow-x-hidden antialiased;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    background-image: radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+    background-size: 28px 28px;
     font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     position: relative;
     min-height: 100vh;
-    transform: none !important; /* IMPORTANT: Prevents breaking fixed positioning */
+    transform: none !important;
     backface-visibility: hidden;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold;
+    @apply font-black tracking-tight;
   }
   
   img {
     content-visibility: auto;
   }
+}
+
+/* Light mode typography overrides */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light h5,
+html.light h6 {
+  color: #000000;
+}
+
+html.light p {
+  color: #2c2d35;
 }
 
 /* Main content padding for dock */
@@ -44,254 +89,307 @@ footer {
   margin-bottom: 5rem !important;
 }
 
-/* Scrollbar Styles */
+/* Neobrutalist Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000;
+  background: var(--bg-color);
+  border-left: 2px solid #000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #00d9ff, #a855f7);
-  border-radius: 10px;
+  background: #FFE600;
+  border: 2px solid #000;
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #00e5ff, #b366ff);
+  background: #00F0FF;
 }
 
-/* Selection */
+/* High-contrast Selection */
 ::selection {
-  background: rgba(0, 217, 255, 0.3);
-  color: white;
+  background: #FFE600;
+  color: #000000;
 }
 
 ::-moz-selection {
-  background: rgba(0, 217, 255, 0.3);
-  color: white;
+  background: #FFE600;
+  color: #000000;
 }
 
-/* Text Gradient - Optimized for mobile */
+/* Neobrutalist UI Primitives */
+
+/* 1. Cards */
+.brutal-card {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  border: 2.5px solid #000000;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px #000000;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.25s ease;
+}
+
+.brutal-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #FFE600;
+}
+
+.brutal-card-cyan:hover {
+  box-shadow: 6px 6px 0px #00F0FF;
+}
+
+.brutal-card-pink:hover {
+  box-shadow: 6px 6px 0px #FF4088;
+}
+
+.brutal-card-lime:hover {
+  box-shadow: 6px 6px 0px #22C55E;
+}
+
+/* 2. Tactile Buttons */
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 2.5px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.brutal-btn-yellow {
+  background-color: #FFE600;
+  color: #000000;
+}
+
+.brutal-btn-yellow:hover {
+  background-color: #FFF04D;
+}
+
+.brutal-btn-cyan {
+  background-color: #00F0FF;
+  color: #000000;
+}
+
+.brutal-btn-cyan:hover {
+  background-color: #4DF5FF;
+}
+
+.brutal-btn-pink {
+  background-color: #FF4088;
+  color: #FFFFFF;
+}
+
+.brutal-btn-white {
+  background-color: #FFFFFF;
+  color: #000000;
+}
+
+/* 3. Badges & Tags */
+.brutal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-geist-mono), monospace;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+/* 4. Marquee / Ticker */
+.hazard-stripes {
+  background: repeating-linear-gradient(
+    -45deg,
+    #000000 0px,
+    #000000 12px,
+    #FFE600 12px,
+    #FFE600 24px
+  );
+}
+
+/* 5. Window header bar for brutalist cards */
+.window-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.85rem;
+  border-bottom: 2px solid #000000;
+  background-color: var(--surface-light);
+  color: var(--text-color);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.window-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.window-dot {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid #000000;
+  border-radius: 50%;
+}
+
+/* Text Gradient & Highlights */
 .text-gradient {
-  background: linear-gradient(90deg, #00d9ff, #a855f7, #ec4899);
+  background: linear-gradient(90deg, #FFE600, #00F0FF, #FF4088);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-x 8s ease infinite;
-  will-change: background-position;
-}
-
-/* Slower gradient animation on mobile */
-@media (max-width: 768px) {
-  .text-gradient {
-    animation: gradient-x 15s ease infinite;
-  }
-}
-
-/* High refresh rate displays - smoother animations */
-@media (min-width: 769px) and (min-resolution: 120dpi) {
-  .text-gradient {
-    animation: gradient-x 10s ease infinite;
-  }
-}
-
-/* Glass Card Effect */
-.glass-card {
-  @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl transition-all duration-300;
-  transform: translateZ(0);
-}
-
-.glass-card:hover {
-  @apply bg-white/10 border-cyan-400/30 shadow-lg;
-  box-shadow: 0 0 30px rgba(0, 217, 255, 0.2);
-}
-
-/* Grid Pattern Background */
-.grid-pattern {
-  background-image: 
-    linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
-}
-
-/* 3D Perspective */
-.perspective-1000 {
-  perspective: 1000px;
-}
-
-/* Parallax Container */
-.parallax-container {
-  position: fixed;
-  inset: 0;
-  z-index: -20;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-/* Animations */
-@keyframes gradient-x {
-  0%, 100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
-  }
-  50% {
-    box-shadow: 0 0 40px rgba(0, 217, 255, 0.6);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-  
-  .text-gradient {
-    animation: none !important;
-    background-position: 0% 50%;
-  }
-  
-  html {
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-  
-  .glass-card {
-    backdrop-filter: blur(8px);
-  }
-  
-  .glass-card:hover {
-    @apply bg-white/5;
-    box-shadow: 0 0 15px rgba(0, 217, 255, 0.1);
-  }
-  
-  button,
-  a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
-
-/* Tablet Optimizations */
-@media (min-width: 769px) and (max-width: 1024px) {
-  main {
-    padding-bottom: 5rem;
-  }
-  
-  footer {
-    margin-bottom: 4rem !important;
-  }
-}
-
-/* Large Desktop Optimizations */
-@media (min-width: 1920px) {
-  .max-w-7xl {
-    max-width: 1600px;
-  }
-
-  h1, .text-8xl {
-    font-size: 7rem !important;
-    line-height: 1 !important;
-  }
-
-  .text-7xl {
-    font-size: 5.5rem !important;
-  }
-
-  .text-5xl {
-    font-size: 4rem !important;
-  }
-
-  .text-4xl {
-    font-size: 3.5rem !important;
-  }
-
-  body {
-    font-size: 1.125rem;
-  }
-}
-
-/* Loading States */
-.loading-skeleton {
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.05) 25%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0.05) 75%
-  );
-  background-size: 200% 100%;
-  animation: loading 1.5s ease-in-out infinite;
+  animation: gradient-x 6s ease infinite;
 }
 
 /* Focus States for Accessibility */
 *:focus-visible {
-  outline: 2px solid #00d9ff;
-  outline-offset: 2px;
+  outline: 3px solid #FFE600 !important;
+  outline-offset: 3px !important;
 }
 
-button:focus-visible,
-a:focus-visible {
-  outline: 2px solid #00d9ff;
-  outline-offset: 4px;
+/* Smooth scrolling offset for anchor links */
+[id] {
+  scroll-margin-top: 1rem;
+  scroll-margin-bottom: 2rem;
+}
+
+/* ============================================
+   FLOATING DOCK - FORCED FIXED POSITIONING
+   ============================================ */
+
+#floating-dock-container {
+  position: fixed !important;
+  bottom: 24px !important;
+  left: 0 !important;
+  right: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 999999 !important;
+  pointer-events: none !important;
+  will-change: transform;
+  isolation: isolate;
+}
+
+#floating-dock-container > * {
+  pointer-events: auto !important;
+}
+
+@media (max-width: 768px) {
+  #floating-dock-container {
+    bottom: 12px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  #floating-dock-container {
+    bottom: 18px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  #floating-dock-container {
+    bottom: 8px !important;
+  }
+}
+
+body,
+body > *,
+#__next,
+main {
+  transform: none !important;
+}
+
+body > * {
+  position: relative;
+  z-index: auto;
+}
+
+.fixed,
+[style*="position: fixed"],
+[style*="position:fixed"] {
+  position: fixed !important;
+}
+
+nav,
+[role="navigation"] {
+  isolation: isolate;
+  z-index: 999999 !important;
+}
+
+/* Scroll Bounce */
+.scroll-dot {
+  animation: scrollBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* Hero Button Brutal Style */
+.hero-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 2.5px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px #000000;
+}
+
+.hero-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* Social Icon Brutal Style */
+.social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.social-icon:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #FFE600;
+}
+
+.social-icon:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
 }
 
 /* Print Styles */
@@ -307,216 +405,21 @@ a:focus-visible {
     background: white;
     color: black;
   }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
   
   .text-gradient {
-    -webkit-text-fill-color: initial;
-    color: black;
+    animation: none !important;
+    background-position: 0% 50%;
   }
-}
-
-/* High Contrast Mode */
-@media (prefers-contrast: high) {
-  .glass-card {
-    border-width: 2px;
-    border-color: rgba(255, 255, 255, 0.3);
-  }
-  
-  .text-gradient {
-    -webkit-text-fill-color: #00d9ff;
-    color: #00d9ff;
-  }
-}
-
-/* Smooth scrolling offset for anchor links */
-[id] {
-  scroll-margin-top: 2rem;
-  scroll-margin-bottom: 6rem;
-}
-
-/* Custom Utility Classes */
-.backdrop-blur-heavy {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-.backdrop-blur-light {
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-}
-
-/* Gradient Text Variations */
-.text-gradient-blue {
-  background: linear-gradient(90deg, #00d9ff, #0099ff);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gradient-purple {
-  background: linear-gradient(90deg, #a855f7, #ec4899);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Glow Effects */
-.glow-cyan {
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.3);
-}
-
-.glow-purple {
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
-}
-
-.glow-pink {
-  box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
-}
-
-/* Hover Glow */
-.hover-glow-cyan:hover {
-  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
-  transition: box-shadow 0.3s ease;
-}
-
-/* Safari-specific fixes */
-@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
-  .glass-card {
-    -webkit-backdrop-filter: blur(16px);
-  }
-}
-
-/* Firefox-specific optimizations */
-@-moz-document url-prefix() {
-  .glass-card {
-    background: rgba(255, 255, 255, 0.08);
-  }
-}
-
-/* ============================================
-   FLOATING DOCK - FORCED FIXED POSITIONING
-   ============================================ */
-
-/* CRITICAL: Force dock to stay fixed and centered */
-#floating-dock-container {
-  position: fixed !important;
-  bottom: 24px !important;
-  left: 0 !important;
-  right: 0 !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  z-index: 999999 !important;
-  pointer-events: none !important;
-  will-change: transform;
-  isolation: isolate;
-}
-
-/* Allow clicks on dock items */
-#floating-dock-container > * {
-  pointer-events: auto !important;
-}
-
-/* Mobile: Smaller spacing */
-@media (max-width: 768px) {
-  #floating-dock-container {
-    bottom: 12px !important;
-  }
-}
-
-/* Tablet */
-@media (min-width: 769px) and (max-width: 1024px) {
-  #floating-dock-container {
-    bottom: 18px !important;
-  }
-}
-
-/* Very small phones */
-@media (max-width: 380px) {
-  #floating-dock-container {
-    bottom: 8px !important;
-  }
-}
-
-/* Prevent any parent transforms from breaking fixed positioning */
-body,
-body > *,
-#__next,
-main {
-  transform: none !important;
-}
-
-/* Ensure nothing covers the dock */
-body > * {
-  position: relative;
-  z-index: auto;
-}
-
-/* Make sure fixed elements actually stay fixed */
-.fixed,
-[style*="position: fixed"],
-[style*="position:fixed"] {
-  position: fixed !important;
-}
-
-/* Force dock above everything */
-nav,
-[role="navigation"] {
-  isolation: isolate;
-  z-index: 999999 !important;
-}
-
-/* ============================================
-   END FLOATING DOCK FIXES
-   ============================================ */
-
-/* GSAP Animation Base Styles */
-.scroll-dot {
-  animation: scrollBounce 1.5s ease-in-out infinite;
-}
-
-@keyframes scrollBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(8px); }
-}
-
-/* Hero Button Hover Glow */
-.hero-btn {
-  position: relative;
-  overflow: hidden;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-
-.hero-btn:hover {
-  box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
-  transform: translateY(-2px);
-}
-
-/* Social Icon Hover */
-.social-icon {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.social-icon:hover {
-  transform: translateY(-4px) scale(1.1);
-  box-shadow: 0 8px 25px rgba(0, 217, 255, 0.2);
-}
-
-/* GSAP ScrollTrigger Progress Bar */
-.gsap-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, #00d9ff, #a855f7, #ec4899);
-  transform-origin: left;
-  z-index: 10000;
-}
-
-/* Smooth Section Reveal */
-.section-reveal {
-  opacity: 0;
-  will-change: transform, opacity;
 }
