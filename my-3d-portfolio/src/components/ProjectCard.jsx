@@ -24,7 +24,7 @@ function ProjectCard({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const isTouch = window.matchMedia("(hover: none)").matches || window.innerWidth < 1024;
+      const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
       setIsTouchDevice(isTouch);
       if (isTouch && imageContainerRef.current) {
         gsap.set(imageContainerRef.current, { height: 180, opacity: 1 });
@@ -62,6 +62,7 @@ function ProjectCard({
   }, [isTouchDevice]);
 
   const handleMouseEnter = useCallback(() => {
+    if (isTouchDevice) return;
     setIsHovered(true);
     if (glowRef.current) gsap.to(glowRef.current, { opacity: 1, duration: 0.3 });
     if (imageContainerRef.current) {
@@ -72,9 +73,10 @@ function ProjectCard({
         ease: "power2.out",
       });
     }
-  }, []);
+  }, [isTouchDevice]);
 
   const handleMouseLeave = useCallback(() => {
+    if (isTouchDevice) return;
     setIsHovered(false);
     const card = innerRef.current;
     if (card) {
@@ -94,9 +96,10 @@ function ProjectCard({
         ease: "power2.in",
       });
     }
-  }, []);
+  }, [isTouchDevice]);
 
   const handleToggleTouch = useCallback(() => {
+    if (!isTouchDevice) return;
     if (!imageContainerRef.current) return;
     const nextState = !isHovered;
     setIsHovered(nextState);
@@ -106,7 +109,7 @@ function ProjectCard({
       duration: 0.45,
       ease: nextState ? "power2.out" : "power2.in",
     });
-  }, [isHovered]);
+  }, [isHovered, isTouchDevice]);
 
   return (
     <div
