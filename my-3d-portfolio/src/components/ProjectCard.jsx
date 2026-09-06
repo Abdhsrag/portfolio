@@ -26,9 +26,6 @@ function ProjectCard({
     if (typeof window !== "undefined") {
       const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
       setIsTouchDevice(isTouch);
-      if (isTouch && imageContainerRef.current) {
-        gsap.set(imageContainerRef.current, { height: 180, opacity: 1 });
-      }
     }
   }, []);
 
